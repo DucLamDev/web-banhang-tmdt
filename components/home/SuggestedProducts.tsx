@@ -78,7 +78,7 @@ export default function SuggestedProducts() {
               onClick={() => setActiveSlug(cat.slug)}
               className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors rounded-t-lg ${
                 activeSlug === cat.slug
-                  ? 'text-red-500 border-b-2 border-red-500 bg-red-50'
+                  ? 'text-primary border-b-2 border-primary bg-primary-50'
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
@@ -108,7 +108,7 @@ export default function SuggestedProducts() {
         <div className="text-center mt-6">
           <Link
             href={`/danh-muc/${activeSlug}`}
-            className="inline-block px-8 py-2 border border-blue-500 text-blue-500 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+            className="inline-block px-8 py-2 border border-primary text-primary rounded-lg hover:bg-primary-50 transition-colors font-medium"
           >
             Xem thêm {categories.find(c => c.slug === activeSlug)?.name}
           </Link>

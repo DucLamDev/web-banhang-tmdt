@@ -20,7 +20,7 @@ export default function NewsletterSection() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-red-500 via-red-600 to-orange-500 rounded-2xl overflow-hidden">
+    <div className="bg-gradient-to-r from-secondary-500 via-secondary-600 to-warning-500 rounded-2xl overflow-hidden">
       <div className="px-6 py-8 md:px-12 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-white text-center md:text-left">
           <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
@@ -28,7 +28,7 @@ export default function NewsletterSection() {
             <h2 className="text-xl font-bold">Nhận ưu đãi đặc biệt</h2>
           </div>
           <p className="text-white/80 text-sm max-w-sm">
-            Đăng ký để nhận thông báo khuyến mãi hot, flash sale và sản phẩm mới nhất từ TGDD
+            Đăng ký để nhận thông báo khuyến mãi hot, flash sale và sản phẩm mới nhất từ MiniShop
           </p>
         </div>
         <form onSubmit={handleSubmit} className="flex gap-2 w-full md:w-auto min-w-0 md:min-w-[400px]">

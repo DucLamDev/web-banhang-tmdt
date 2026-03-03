@@ -68,7 +68,7 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50">
         {/* Top Banner */}
-        <div className="bg-gradient-to-r from-red-600 to-red-500 text-white text-center py-1 text-sm">
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-500 text-white text-center py-1 text-sm">
           <span>🎉 KHAI XUÂN NĂM MÃ - SĂN DEAL CỰC ĐÃ - GIẢM ĐẾN 50% 🎉</span>
         </div>
 
@@ -79,10 +79,10 @@ export default function Header() {
               {/* Logo */}
               <Link href="/" className="flex-shrink-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center">
-                    <span className="text-xl">🌐</span>
+                  <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                    <span className="text-2xl font-bold text-primary">M</span>
                   </div>
-                  <span className="font-bold text-lg hidden sm:block">thegioididong</span>
+                  <span className="font-bold text-xl hidden sm:block text-white">MiniShop</span>
                 </div>
               </Link>
 

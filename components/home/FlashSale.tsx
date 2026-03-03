@@ -33,7 +33,7 @@ export default function FlashSale() {
 
   return (
     <Link href="/danh-muc/dien-thoai" className="group block">
-      <div className="relative bg-gradient-to-r from-red-600 via-red-500 to-orange-500 rounded-2xl overflow-hidden">
+      <div className="relative bg-gradient-to-r from-secondary-600 via-secondary-500 to-warning-500 rounded-2xl overflow-hidden">
         {/* Animated shine effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000" />
         
@@ -61,7 +61,7 @@ export default function FlashSale() {
           </div>
 
           {/* Right: CTA */}
-          <div className="bg-white text-red-600 font-bold px-4 py-2 rounded-xl text-sm hover:bg-yellow-50 transition-colors shadow-lg whitespace-nowrap">
+          <div className="bg-white text-secondary font-bold px-4 py-2 rounded-xl text-sm hover:bg-secondary-50 transition-colors shadow-lg whitespace-nowrap">
             MUA NGAY →
           </div>
         </div>

@@ -21,7 +21,7 @@ export default function BrandShowcase() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-800">Thương hiệu nổi bật</h2>
-        <Link href="/danh-muc/dien-thoai" className="text-sm text-blue-600 hover:underline">Xem thêm →</Link>
+        <Link href="/danh-muc/dien-thoai" className="text-sm text-primary hover:underline">Xem thêm →</Link>
       </div>
       <div className="grid grid-cols-5 sm:grid-cols-5 lg:grid-cols-10 gap-3">
         {brands.map((brand) => (

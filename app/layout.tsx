@@ -9,8 +9,8 @@ import ChatWidget from '@/components/chat/ChatWidget';
 const inter = Inter({ subsets: ['latin', 'vietnamese'] });
 
 export const metadata: Metadata = {
-  title: 'Thế Giới Di Động - Điện thoại, Laptop, Tablet, Phụ kiện chính hãng',
-  description: 'Hệ thống bán lẻ điện thoại, laptop, tablet, phụ kiện chính hãng giá tốt nhất',
+  title: 'MiniShop - Điện thoại, Laptop, Tablet, Phụ kiện chính hãng',
+  description: 'MiniShop - Hệ thống bán lẻ điện thoại, laptop, tablet, phụ kiện chính hãng giá tốt nhất',
 };
 
 export default function RootLayout({

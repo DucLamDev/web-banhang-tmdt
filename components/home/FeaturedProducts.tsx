@@ -40,7 +40,7 @@ export default function FeaturedProducts() {
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-bold text-gray-800">Sản phẩm nổi bật</h2>
-        <Link href="/san-pham" className="text-blue-600 hover:underline text-sm font-medium">
+        <Link href="/san-pham" className="text-primary hover:underline text-sm font-medium">
           Xem tất cả →
         </Link>
       </div>

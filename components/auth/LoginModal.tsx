@@ -232,7 +232,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
           <Button
             type="submit"
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
+            className="w-full bg-primary hover:bg-primary-600 text-white"
             disabled={loading}
           >
             {loading ? (
@@ -279,7 +279,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   setIsLogin(false);
                   resetForm();
                 }}
-                className="text-blue-600 hover:underline font-medium"
+                className="text-primary hover:underline font-medium"
               >
                 Đăng ký ngay
               </button>
@@ -292,7 +292,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   setIsLogin(true);
                   resetForm();
                 }}
-                className="text-blue-600 hover:underline font-medium"
+                className="text-primary hover:underline font-medium"
               >
                 Đăng nhập
               </button>
