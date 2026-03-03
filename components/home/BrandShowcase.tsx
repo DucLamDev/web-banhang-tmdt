@@ -27,7 +27,7 @@ export default function BrandShowcase() {
         {brands.map((brand) => (
           <Link
             key={brand.name}
-            href={`/tim-kiem?q=${brand.slug}`}
+            href={`/tim-kiem?brand=${brand.slug}`}
             className={`${brand.bgColor} rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:scale-105 hover:shadow-md transition-all duration-200 aspect-square`}
           >
             <div className="relative w-10 h-10">

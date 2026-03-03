@@ -22,18 +22,26 @@ interface Product {
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
+  const brand = searchParams.get('brand') || '';
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const searchProducts = async () => {
-      if (!query.trim()) {
+      if (!query.trim() && !brand.trim()) {
         setProducts([]);
         return;
       }
       setLoading(true);
       try {
-        const response = await productApi.search(query);
+        let response;
+        if (brand) {
+          // Filter by brand using productApi.getAll with brand param
+          response = await productApi.getAll({ brand });
+        } else {
+          // Search by text query
+          response = await productApi.search(query);
+        }
         setProducts(response.data.products || response.data || []);
       } catch (error) {
         console.error('Error searching products:', error);
@@ -42,7 +50,7 @@ function SearchContent() {
       }
     };
     searchProducts();
-  }, [query]);
+  }, [query, brand]);
 
   return (
     <div className="bg-gray-50 min-h-screen py-6">
@@ -51,7 +59,9 @@ function SearchContent() {
         <nav className="flex items-center gap-2 text-sm mb-6">
           <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-900">Tìm kiếm: "{query}"</span>
+          <span className="text-gray-900">
+            {brand ? `Thương hiệu: "${brand}"` : `Tìm kiếm: "${query}"`}
+          </span>
         </nav>
 
         {/* Results */}
@@ -59,7 +69,7 @@ function SearchContent() {
           <div className="flex items-center gap-2 mb-6">
             <Search className="w-5 h-5 text-gray-400" />
             <h1 className="text-xl font-bold">
-              Kết quả tìm kiếm cho "{query}"
+              {brand ? `Sản phẩm thương hiệu "${brand}"` : `Kết quả tìm kiếm cho "${query}"`}
             </h1>
             {!loading && <span className="text-gray-500">({products.length} sản phẩm)</span>}
           </div>
