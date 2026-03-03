@@ -143,34 +143,39 @@ export default function ProductDetailPage() {
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Images */}
-          <div className="space-y-4">
-            <div className="bg-white rounded-xl p-4">
-              <div className="relative aspect-square">
+          <div className="lg:col-span-1 space-y-3">
+            <div className="bg-white rounded-xl p-6 border">
+              <div className="relative w-full h-[320px]">
                 <Image
                   src={product.images[selectedImage] || product.thumbnail}
                   alt={product.name}
                   fill
                   className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 400px"
                 />
               </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 overflow-hidden ${selectedImage === idx ? 'border-primary' : 'border-gray-200'}`}
-                >
-                  <Image src={img} alt="" width={80} height={80} className="object-contain" />
-                </button>
-              ))}
-            </div>
+            {product.images.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {product.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(idx)}
+                    className={`flex-shrink-0 w-16 h-16 rounded-lg border-2 overflow-hidden transition-all ${selectedImage === idx ? 'border-primary ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'}`}
+                  >
+                    <div className="relative w-full h-full">
+                      <Image src={img} alt="" fill className="object-contain p-1" sizes="64px" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="lg:col-span-2 space-y-6">
             <div>
               {product.badges && product.badges.length > 0 && (
                 <div className="flex items-center gap-2 mb-2">
