@@ -4,16 +4,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const brands = [
-  { name: 'Apple', slug: 'Apple', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/2-apple-180x180.png', bgColor: 'bg-gray-100' },
-  { name: 'Samsung', slug: 'Samsung', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/samsung-180x180.png', bgColor: 'bg-blue-50' },
-  { name: 'ASUS', slug: 'ASUS', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/asus-180x180.png', bgColor: 'bg-blue-50' },
-  { name: 'Dell', slug: 'Dell', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/dell-180x180.png', bgColor: 'bg-gray-50' },
-  { name: 'Lenovo', slug: 'Lenovo', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/lenovo-180x180.png', bgColor: 'bg-red-50' },
-  { name: 'HP', slug: 'HP', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/hp-180x180.png', bgColor: 'bg-blue-50' },
-  { name: 'Xiaomi', slug: 'Xiaomi', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/xiaomi-180x180.png', bgColor: 'bg-orange-50' },
-  { name: 'OPPO', slug: 'OPPO', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/oppo-180x180.png', bgColor: 'bg-green-50' },
-  { name: 'Sony', slug: 'Sony', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/sony-180x180.png', bgColor: 'bg-gray-50' },
-  { name: 'JBL', slug: 'JBL', logo: 'https://cdn.tgdd.vn/Brand/1/Logo/jbl-180x180.png', bgColor: 'bg-orange-50' },
+  { name: 'Apple', slug: 'Apple', logo: '/images/logo/y-nghia-logo-apple-2.jpg', bgColor: 'bg-gray-100' },
+  { name: 'Samsung', slug: 'Samsung', logo: '/images/logo/samsung-company-logo-south-korean-260nw-2394493913.webp', bgColor: 'bg-blue-50' },
+  { name: 'ASUS', slug: 'ASUS', logo: '/images/logo/logo-asus-inkythuatso-2-01-26-09-21-11.jpg', bgColor: 'bg-blue-50' },
+  { name: 'Dell', slug: 'Dell', logo: '/images/logo/logo-dell-1.jpg', bgColor: 'bg-gray-50' },
+  { name: 'Lenovo', slug: 'Lenovo', logo: '/images/logo/lenovo-logo-brand-phone-symbol-name-black-design-china-mobile-illustration-free-vector.jpg', bgColor: 'bg-red-50' },
+  { name: 'HP', slug: 'HP', logo: '/images/logo/logo-hp.png', bgColor: 'bg-blue-50' },
+  { name: 'Xiaomi', slug: 'Xiaomi', logo: '/images/logo/Xiaomi_logo_(2021-).svg.png', bgColor: 'bg-orange-50' },
+  { name: 'OPPO', slug: 'OPPO', logo: '/images/logo/new-oppo-logo_600x173.png', bgColor: 'bg-green-50' },
+  { name: 'Sony', slug: 'Sony', logo: '/images/logo/logo-sony.png', bgColor: 'bg-gray-50' },
+  { name: 'JBL', slug: 'JBL', logo: '/images/logo/logo-jbl.png', bgColor: 'bg-orange-50' },
 ];
 
 export default function BrandShowcase() {
