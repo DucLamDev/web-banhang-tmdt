@@ -1,0 +1,113 @@
+import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Product APIs
+export const productApi = {
+  getAll: (params?: Record<string, unknown>) => api.get('/products', { params }),
+  getById: (id: string) => api.get(`/products/${id}`),
+  getBySlug: (slug: string) => api.get(`/products/slug/${slug}`),
+  getFeatured: () => api.get('/products/featured'),
+  getFlashSale: () => api.get('/products/flash-sale'),
+  search: (keyword: string) => api.get(`/products/search/${keyword}`),
+};
+
+// Category APIs
+export const categoryApi = {
+  getAll: () => api.get('/categories'),
+  getTree: () => api.get('/categories/tree'),
+  getBySlug: (slug: string) => api.get(`/categories/slug/${slug}`),
+};
+
+// User APIs
+export const userApi = {
+  register: (data: { email: string; password: string; fullName: string; phone?: string }) =>
+    api.post('/users/register', data),
+  login: (data: { email: string; password: string }) =>
+    api.post('/users/login', data),
+  getMe: () => api.get('/users/me'),
+  updateProfile: (data: { fullName?: string; phone?: string; avatar?: string }) =>
+    api.put('/users/profile', data),
+  updatePassword: (data: { currentPassword: string; newPassword: string }) =>
+    api.put('/users/password', data),
+  addAddress: (data: Record<string, unknown>) => api.post('/users/addresses', data),
+  updateAddress: (addressId: string, data: Record<string, unknown>) =>
+    api.put(`/users/addresses/${addressId}`, data),
+  deleteAddress: (addressId: string) => api.delete(`/users/addresses/${addressId}`),
+  toggleWishlist: (productId: string) => api.post(`/users/wishlist/${productId}`),
+  googleLogin: (credential: string) => api.post('/users/google-login', { credential }),
+};
+
+// Cart APIs
+export const cartApi = {
+  get: () => api.get('/cart'),
+  addItem: (data: { productId: string; variantSku: string; quantity?: number }) =>
+    api.post('/cart/items', data),
+  updateItem: (itemId: string, data: { quantity: number }) =>
+    api.put(`/cart/items/${itemId}`, data),
+  removeItem: (itemId: string) => api.delete(`/cart/items/${itemId}`),
+  applyVoucher: (code: string) => api.post('/cart/voucher', { code }),
+  removeVoucher: () => api.delete('/cart/voucher'),
+  clear: () => api.delete('/cart'),
+};
+
+// Order APIs
+export const orderApi = {
+  create: (data: Record<string, unknown>) => api.post('/orders', data),
+  getMyOrders: (params?: Record<string, unknown>) => api.get('/orders/my-orders', { params }),
+  getById: (id: string) => api.get(`/orders/${id}`),
+  tracking: (orderNumber: string) => api.get(`/orders/tracking/${orderNumber}`),
+  cancel: (id: string, reason?: string) => api.put(`/orders/${id}/cancel`, { reason }),
+};
+
+// Chat APIs
+export const chatApi = {
+  createSession: () => api.post('/chat/session'),
+  getSession: (sessionId: string) => api.get(`/chat/session/${sessionId}`),
+  getHistory: (params?: Record<string, unknown>) => api.get('/chat/history', { params }),
+  requestAdmin: (sessionId: string, reason?: string) =>
+    api.post(`/chat/session/${sessionId}/request-admin`, { reason }),
+  closeSession: (sessionId: string) => api.post(`/chat/session/${sessionId}/close`),
+};
+
+// Banner APIs
+export const bannerApi = {
+  getAll: (position?: string) => api.get('/banners', { params: { position } }),
+};
+
+export default api;

@@ -1,0 +1,36 @@
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Toaster } from 'react-hot-toast';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import ChatWidget from '@/components/chat/ChatWidget';
+
+const inter = Inter({ subsets: ['latin', 'vietnamese'] });
+
+export const metadata: Metadata = {
+  title: 'Thế Giới Di Động - Điện thoại, Laptop, Tablet, Phụ kiện chính hãng',
+  description: 'Hệ thống bán lẻ điện thoại, laptop, tablet, phụ kiện chính hãng giá tốt nhất',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="vi">
+      <body className={inter.className}>
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1 bg-background">
+            {children}
+          </main>
+          <Footer />
+          <ChatWidget />
+        </div>
+        <Toaster position="top-center" />
+      </body>
+    </html>
+  );
+}
