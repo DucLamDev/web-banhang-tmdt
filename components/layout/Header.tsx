@@ -113,6 +113,14 @@ export default function Header() {
                       <ChevronDown className="w-4 h-4 hidden md:block" />
                     </button>
                     <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+                      {user.role === 'admin' && (
+                        <>
+                          <Link href="/admin" className="block px-4 py-2 hover:bg-gray-50 text-primary text-sm font-medium">
+                            🔧 Quản trị Admin
+                          </Link>
+                          <hr className="my-1" />
+                        </>
+                      )}
                       <Link href="/tai-khoan" className="block px-4 py-2 hover:bg-gray-50 text-gray-700 text-sm">
                         Tài khoản của tôi
                       </Link>
