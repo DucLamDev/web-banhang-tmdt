@@ -14,7 +14,7 @@ const config: Config = {
           DEFAULT: '#2AACA7',
           foreground: '#ffffff',
           50: '#E6F7F7',
-          100: '#C2EAE9',
+          100: '#C2EAF9',
           200: '#9DDCDB',
           300: '#70CCC9',
           400: '#4BBCB8',

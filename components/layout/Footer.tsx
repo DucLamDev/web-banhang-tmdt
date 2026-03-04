@@ -11,22 +11,21 @@ export default function Footer() {
             <h3 className="font-bold text-gray-900 mb-4">Tổng đài hỗ trợ</h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-600" />
+                <Phone className="w-4 h-4 text-primary" />
                 <span className="text-gray-600">Gọi mua: </span>
-                <a href="tel:19002460" className="text-blue-600 font-medium">1900 232 460</a>
-                <span className="text-gray-400">(8:00 - 21:30)</span>
+                <a href="tel:19001234" className="text-primary font-medium">1900 1234</a>
+                <span className="text-gray-400">(8:00 - 22:00)</span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-600" />
+                <Phone className="w-4 h-4 text-primary" />
                 <span className="text-gray-600">Khiếu nại: </span>
-                <a href="tel:18001062" className="text-blue-600 font-medium">1800.1062</a>
-                <span className="text-gray-400">(8:00 - 21:30)</span>
+                <a href="tel:19005678" className="text-primary font-medium">1900 5678</a>
+                <span className="text-gray-400">(8:00 - 22:00)</span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-blue-600" />
-                <span className="text-gray-600">Bảo hành: </span>
-                <a href="tel:19002464" className="text-blue-600 font-medium">1900 232 464</a>
-                <span className="text-gray-400">(8:00 - 21:00)</span>
+                <Mail className="w-4 h-4 text-primary" />
+                <span className="text-gray-600">Email: </span>
+                <a href="mailto:support@minishop.vn" className="text-primary font-medium">support@minishop.vn</a>
               </li>
             </ul>
           </div>
@@ -36,23 +35,23 @@ export default function Footer() {
             <h3 className="font-bold text-gray-900 mb-4">Về công ty</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/gioi-thieu" className="text-gray-600 hover:text-blue-600">
-                  Giới thiệu công ty (MWG.vn)
+                <Link href="/gioi-thieu" className="text-gray-600 hover:text-primary">
+                  Giới thiệu MiniShop
                 </Link>
               </li>
               <li>
-                <Link href="/tuyen-dung" className="text-gray-600 hover:text-blue-600">
+                <Link href="/tuyen-dung" className="text-gray-600 hover:text-primary">
                   Tuyển dụng
                 </Link>
               </li>
               <li>
-                <Link href="/gop-y" className="text-gray-600 hover:text-blue-600">
+                <Link href="/gop-y" className="text-gray-600 hover:text-primary">
                   Gửi góp ý, khiếu nại
                 </Link>
               </li>
               <li>
-                <Link href="/he-thong-cua-hang" className="text-gray-600 hover:text-blue-600">
-                  Tìm siêu thị (2.956 shop)
+                <Link href="/he-thong-cua-hang" className="text-gray-600 hover:text-primary">
+                  Hệ thống cửa hàng
                 </Link>
               </li>
             </ul>
@@ -60,26 +59,26 @@ export default function Footer() {
 
           {/* Other Info */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-4">Thông tin khác</h3>
+            <h3 className="font-bold text-gray-900 mb-4">Chính sách</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/tich-diem" className="text-gray-600 hover:text-blue-600">
-                  Tích điểm Quà tặng VIP
-                </Link>
-              </li>
-              <li>
-                <Link href="/lich-su-mua-hang" className="text-gray-600 hover:text-blue-600">
-                  Lịch sử mua hàng
-                </Link>
-              </li>
-              <li>
-                <Link href="/tra-cham" className="text-gray-600 hover:text-blue-600">
-                  Tìm hiểu về mua trả chậm
-                </Link>
-              </li>
-              <li>
-                <Link href="/chinh-sach-bao-hanh" className="text-gray-600 hover:text-blue-600">
+                <Link href="/chinh-sach-bao-hanh" className="text-gray-600 hover:text-primary">
                   Chính sách bảo hành
+                </Link>
+              </li>
+              <li>
+                <Link href="/chinh-sach-doi-tra" className="text-gray-600 hover:text-primary">
+                  Chính sách đổi trả
+                </Link>
+              </li>
+              <li>
+                <Link href="/chinh-sach-thanh-toan" className="text-gray-600 hover:text-primary">
+                  Chính sách thanh toán
+                </Link>
+              </li>
+              <li>
+                <Link href="/chinh-sach-van-chuyen" className="text-gray-600 hover:text-primary">
+                  Chính sách vận chuyển
                 </Link>
               </li>
             </ul>
@@ -87,17 +86,15 @@ export default function Footer() {
 
           {/* Social */}
           <div>
-            <h3 className="font-bold text-gray-900 mb-4">Website cùng tập đoàn</h3>
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-green-500 text-white text-xs rounded-full">topzone</span>
-              <span className="px-3 py-1 bg-green-600 text-white text-xs rounded-full">dienmayxanh</span>
-              <span className="px-3 py-1 bg-green-700 text-white text-xs rounded-full">bachhoaxanh</span>
-            </div>
-            <div className="flex items-center gap-4 mt-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700">
+            <h3 className="font-bold text-gray-900 mb-4">Kết nối với chúng tôi</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Theo dõi MiniShop để cập nhật tin tức và khuyến mãi mới nhất
+            </p>
+            <div className="flex items-center gap-4">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-700 transition-colors">
                 <Facebook className="w-8 h-8" />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-red-600 hover:text-red-700">
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-secondary hover:text-secondary-700 transition-colors">
                 <Youtube className="w-8 h-8" />
               </a>
             </div>
@@ -106,13 +103,13 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-8 pt-6 border-t text-center text-sm text-gray-500">
-          <p>© 2018. Công Ty Cổ Phần Đầu Tư Điện Máy Xanh.</p>
+          <p>© 2024 MiniShop. All rights reserved.</p>
           <p className="mt-1">
             <MapPin className="inline w-4 h-4 mr-1" />
-            Địa chỉ: 128 Trần Quang Khải, P.Tân Định, TP.Hồ Chí Minh
+            Địa chỉ: 123 Nguyễn Huệ, Quận 1, TP.Hồ Chí Minh
           </p>
           <p className="mt-1">
-            Điện thoại: 028 38125960 | Email: hotrotmdt@thegioididong.com
+            Điện thoại: 1900 1234 | Email: support@minishop.vn
           </p>
         </div>
       </div>

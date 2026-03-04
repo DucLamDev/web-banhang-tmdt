@@ -50,8 +50,8 @@ export default function ProductCard({ product, isFlashSale = false }: ProductCar
     : 100;
 
   return (
-    <Link href={`/san-pham/${product.slug}`} className="block">
-      <div className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-lg hover:border-primary transition-all duration-200 h-full flex flex-col">
+    <Link href={`/san-pham/${product.slug}`} className="block group">
+      <div className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-xl hover:border-primary hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
         {/* Badges */}
         {product.badges && product.badges.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
@@ -77,7 +77,7 @@ export default function ProductCard({ product, isFlashSale = false }: ProductCar
               src={imageUrl}
               alt={product.name}
               fill
-              className="object-contain p-2"
+              className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
               sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
             />
           ) : (

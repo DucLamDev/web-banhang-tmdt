@@ -1,0 +1,14 @@
+<svg width="140" height="40" viewBox="0 0 140 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rounded rectangle -->
+  <rect x="2" y="2" width="36" height="36" rx="8" fill="#2AACA7"/>
+  
+  <!-- Shopping bag icon -->
+  <path d="M12 15h16v14a2 2 0 0 1-2 2h-12a2 2 0 0 1-2-2v-14z" fill="white"/>
+  <path d="M16 15v-2a4 4 0 0 1 8 0v2" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <circle cx="17" cy="22" r="1" fill="#2AACA7"/>
+  <circle cx="23" cy="22" r="1" fill="#2AACA7"/>
+  
+  <!-- MiniShop Text -->
+  <text x="45" y="16" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white">Mini</text>
+  <text x="45" y="34" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#FF755E">Shop</text>
+</svg>

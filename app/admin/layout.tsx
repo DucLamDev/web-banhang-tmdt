@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, MessageSquare, 
-  Settings, ChevronLeft, Menu, LogOut, Tag, Image as ImageIcon
+  Settings, ChevronLeft, Menu, LogOut, Tag, Image as ImageIcon, Truck, Gift
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
@@ -14,7 +14,9 @@ const menuItems = [
   { icon: Package, label: 'Sản phẩm', href: '/admin/san-pham' },
   { icon: Tag, label: 'Danh mục', href: '/admin/danh-muc' },
   { icon: ShoppingCart, label: 'Đơn hàng', href: '/admin/don-hang' },
+  { icon: Truck, label: 'Vận chuyển', href: '/admin/van-chuyen' },
   { icon: Users, label: 'Khách hàng', href: '/admin/khach-hang' },
+  { icon: Gift, label: 'Khuyến mãi', href: '/admin/khuyen-mai' },
   { icon: ImageIcon, label: 'Banner', href: '/admin/banner' },
   { icon: MessageSquare, label: 'Chat', href: '/admin/chat' },
   { icon: Settings, label: 'Cài đặt', href: '/admin/cai-dat' },
@@ -31,7 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className={`bg-gray-900 text-white transition-all duration-300 ${collapsed ? 'w-16' : 'w-64'} flex flex-col`}>
         {/* Logo */}
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-          {!collapsed && <span className="font-bold text-xl">TGDD Admin</span>}
+          {!collapsed && <span className="font-bold text-xl">MiniShop Admin</span>}
           <button onClick={() => setCollapsed(!collapsed)} className="p-2 hover:bg-gray-800 rounded-lg">
             {collapsed ? <Menu className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </button>

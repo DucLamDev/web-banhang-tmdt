@@ -13,7 +13,7 @@ const features = [
   {
     icon: Shield,
     title: 'Bảo hành chính hãng',
-    desc: '12 - 24 tháng tại TGDD',
+    desc: '12 - 24 tháng tại MiniShop',
     bgColor: 'bg-green-100',
     iconColor: 'text-green-600',
   },

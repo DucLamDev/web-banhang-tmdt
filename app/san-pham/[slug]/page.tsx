@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore, useAuthStore, useUIStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
-import { productApi } from '@/lib/api';
+import { productApi, userApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 interface Variant {
@@ -52,6 +52,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
+  const [isWishlisted, setIsWishlisted] = useState(false);
   const { addItem } = useCartStore();
   const { isAuthenticated } = useAuthStore();
   const { openLoginModal } = useUIStore();
@@ -88,6 +89,16 @@ export default function ProductDetailPage() {
       if (variant) setSelectedVariant(variant);
     }
   }, [selectedStorage, selectedColor, product]);
+
+  const handleToggleWishlist = async () => {
+    if (!isAuthenticated) { toast.error('Vui lòng đăng nhập!'); openLoginModal(); return; }
+    if (!product) return;
+    try {
+      await userApi.toggleWishlist(product._id);
+      setIsWishlisted(!isWishlisted);
+      toast.success(isWishlisted ? 'Đã xóa khỏi yêu thích' : 'Đã thêm vào yêu thích!');
+    } catch { toast.error('Có lỗi xảy ra'); }
+  };
 
   const handleAddToCart = () => {
     if (!product || !selectedVariant) return;
@@ -135,47 +146,49 @@ export default function ProductDetailPage() {
           <nav className="flex items-center gap-2 text-sm">
             <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
-            <Link href="/danh-muc/dien-thoai" className="text-gray-500 hover:text-primary">Điện thoại</Link>
+            <Link href="/danh-muc/laptop" className="text-gray-500 hover:text-primary">Laptop</Link>
             <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900">{product.name}</span>
+            <span className="text-gray-900">{product.brand}</span>
           </nav>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Images */}
-          <div className="lg:col-span-1 space-y-3">
-            <div className="bg-white rounded-xl p-6 border">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left: Images */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="bg-white rounded-xl p-4 border">
               <div className="relative w-full h-[320px]">
                 <Image
                   src={product.images[selectedImage] || product.thumbnail}
                   alt={product.name}
                   fill
                   className="object-contain"
-                  sizes="(max-width: 768px) 100vw, 400px"
+                  sizes="(max-width: 768px) 100vw, 500px"
                 />
               </div>
+              {product.images.length > 1 && (
+                <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                  {product.images.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      className={`relative w-20 h-20 flex-shrink-0 rounded-lg border-2 overflow-hidden transition-all ${
+                        selectedImage === idx ? 'ring-2 ring-primary border-primary' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="relative w-full h-full">
+                        <Image src={img} alt="" fill className="object-contain p-1" sizes="80px" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            {product.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {product.images.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg border-2 overflow-hidden transition-all ${selectedImage === idx ? 'border-primary ring-2 ring-primary/20' : 'border-gray-200 hover:border-gray-300'}`}
-                  >
-                    <div className="relative w-full h-full">
-                      <Image src={img} alt="" fill className="object-contain p-1" sizes="64px" />
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Product Info */}
-          <div className="lg:col-span-2 space-y-6">
+          {/* Right: Purchase Section */}
+          <div className="lg:col-span-7 space-y-4">
             <div>
               {product.badges && product.badges.length > 0 && (
                 <div className="flex items-center gap-2 mb-2">
@@ -196,16 +209,39 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Price */}
-            <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-4">
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-red-600">{formatPrice(selectedVariant?.price || 0)}</span>
+            {/* Price Box */}
+            <div className="bg-white rounded-xl border p-4">
+              <div className="flex items-baseline gap-3 mb-2">
+                <span className="text-3xl font-bold text-secondary">{formatPrice((selectedVariant?.price || 0) * quantity)}</span>
                 {discount > 0 && (
                   <>
-                    <span className="text-lg text-gray-400 line-through">{formatPrice(selectedVariant?.originalPrice || 0)}</span>
-                    <Badge variant="destructive">-{discount}%</Badge>
+                    <span className="text-lg text-gray-400 line-through">{formatPrice((selectedVariant?.originalPrice || 0) * quantity)}</span>
+                    <Badge className="bg-secondary text-white">-{discount}%</Badge>
                   </>
                 )}
+              </div>
+              {quantity > 1 && (
+                <p className="text-sm text-gray-500">Đơn giá: {formatPrice(selectedVariant?.price || 0)} × {quantity}</p>
+              )}
+            </div>
+
+            {/* Promotional Banners - TGDD Style */}
+            <div className="space-y-3">
+              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary text-white px-3 py-1 rounded-lg font-bold text-sm">GIẢM THÊM 200.000₫</div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">Với HSSV (Từ THPT trở lên), Giáo viên, Giảng viên</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200">
+                <div className="flex items-center gap-3">
+                  <div className="bg-warning text-white px-3 py-1 rounded-lg font-bold text-sm">NHẬP MÃ LAPTOP.200K</div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">GIẢM NGAY 200.000₫ - Họạt động này sẽ giúp hàng</p>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -263,32 +299,72 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
+            {/* Warranty Options */}
+            <div className="bg-white rounded-xl border p-4">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <Shield className="w-5 h-5 text-primary" />
+                Chọn 1 trong các khuyến mãi:
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-start gap-3 p-3 border-2 border-primary bg-primary/5 rounded-lg cursor-pointer">
+                  <input type="radio" name="warranty" defaultChecked className="mt-1" />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800">Bảo hành theo nhà sản xuất - 24 tháng</p>
+                    <p className="text-sm text-secondary font-bold">14.990.000₫</p>
+                  </div>
+                </label>
+                <label className="flex items-start gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-gray-300">
+                  <input type="radio" name="warranty" className="mt-1" />
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800">Kèm gói bảo hiểm rơi vỡ - 6 tháng</p>
+                    <p className="text-sm text-gray-600">15.877.000₫</p>
+                    <p className="text-xs text-gray-500">MIỄN PHÍ sửa chữa hoặc ĐỔI MỚI nếu hư hỏng (Khách hàng bù 25%)</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            {/* Promotion Details */}
+            <div className="bg-white rounded-xl border p-4">
+              <h3 className="font-semibold mb-3 text-primary">🎁 Khuyến mãi trị giá 2.190.000₫</h3>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                  <p>Giảm ngay 700.000₫</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                  <p>Tặng Microsoft 365 Personal</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                  <p>Tặng PMH 100.000₫ mua bàn,túi chống sốc</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                  <p>Tặng Phiếu mua hàng trị giá 300.000₫ Áp dụng mua Máy in</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                  <p>Tặng Phiếu mua hàng Màn hình máy tính trị giá 300.000₫</p>
+                </div>
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="flex gap-3">
-              <Button size="lg" className="flex-1 h-14 text-lg" onClick={handleAddToCart}>
+              <Button size="lg" className="flex-1 h-14 text-lg bg-secondary hover:bg-secondary-600" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Thêm vào giỏ
               </Button>
-              <Button size="lg" variant="outline" className="h-14">
-                <Heart className="w-5 h-5" />
+              <Button size="lg" className="flex-1 h-14 text-lg bg-primary hover:bg-primary-600">
+                Mua ngay
+              </Button>
+              <Button size="lg" variant="outline" className="h-14 w-14 flex-shrink-0" onClick={handleToggleWishlist}>
+                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-secondary text-secondary' : 'text-gray-400'}`} />
               </Button>
             </div>
 
-            {/* Promotions */}
-            {product.promotions && product.promotions.length > 0 && (
-              <div className="bg-white rounded-xl border p-4 space-y-3">
-                <h3 className="font-semibold text-primary">🎁 Khuyến mãi</h3>
-                {product.promotions.map((promo, idx) => (
-                  <div key={idx} className="flex items-start gap-2 text-sm">
-                    <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <span className="font-medium">{promo.title}</span>
-                      {promo.description && <span className="text-gray-500"> - {promo.description}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* Services */}
             <div className="grid grid-cols-3 gap-4">

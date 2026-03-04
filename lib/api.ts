@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = "https://web-banhang-tmdt-backend.onrender.com/api"
+// const API_URL = "http://localhost:3001/api"
 
 const api = axios.create({
   baseURL: API_URL,
@@ -44,7 +45,7 @@ export const productApi = {
   getBySlug: (slug: string) => api.get(`/products/slug/${slug}`),
   getFeatured: () => api.get('/products/featured'),
   getFlashSale: () => api.get('/products/flash-sale'),
-  search: (keyword: string) => api.get(`/products/search/${keyword}`),
+  search: (keyword: string) => api.get('/products', { params: { search: keyword, limit: 50 } }),
 };
 
 // Category APIs
