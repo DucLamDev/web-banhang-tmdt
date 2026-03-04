@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore, useAuthStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
+import { fetchProvinces, fetchDistricts, fetchWards, Province, District, Ward } from '@/lib/vietnamAddress';
 import toast from 'react-hot-toast';
 
 const paymentMethods = [
@@ -34,6 +35,59 @@ export default function CheckoutPage() {
     street: '',
     note: '',
   });
+
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [wards, setWards] = useState<Ward[]>([]);
+  const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchProvinces().then(setProvinces);
+  }, []);
+
+  useEffect(() => {
+    if (selectedProvinceCode) {
+      fetchDistricts(selectedProvinceCode).then(setDistricts);
+      setDistricts([]);
+      setWards([]);
+      setForm(prev => ({ ...prev, district: '', ward: '' }));
+    }
+  }, [selectedProvinceCode]);
+
+  useEffect(() => {
+    if (selectedDistrictCode) {
+      fetchWards(selectedDistrictCode).then(setWards);
+      setWards([]);
+      setForm(prev => ({ ...prev, ward: '' }));
+    }
+  }, [selectedDistrictCode]);
+
+  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = parseInt(e.target.value);
+    const province = provinces.find(p => p.code === code);
+    if (province) {
+      setSelectedProvinceCode(code);
+      setForm(prev => ({ ...prev, province: province.name }));
+    }
+  };
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = parseInt(e.target.value);
+    const district = districts.find(d => d.code === code);
+    if (district) {
+      setSelectedDistrictCode(code);
+      setForm(prev => ({ ...prev, district: district.name }));
+    }
+  };
+
+  const handleWardChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const code = parseInt(e.target.value);
+    const ward = wards.find(w => w.code === code);
+    if (ward) {
+      setForm(prev => ({ ...prev, ward: ward.name }));
+    }
+  };
 
   const subtotal = getTotal();
   const shippingFee = subtotal >= 2000000 ? 0 : 30000;
@@ -112,29 +166,45 @@ export default function CheckoutPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Tỉnh/Thành phố *</label>
-                    <Input
-                      value={form.province}
-                      onChange={(e) => setForm({ ...form, province: e.target.value })}
-                      placeholder="Chọn tỉnh/thành phố"
+                    <select
+                      value={selectedProvinceCode || ''}
+                      onChange={handleProvinceChange}
                       required
-                    />
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    >
+                      <option value="">Chọn tỉnh/thành phố</option>
+                      {provinces.map(p => (
+                        <option key={p.code} value={p.code}>{p.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Quận/Huyện *</label>
-                    <Input
-                      value={form.district}
-                      onChange={(e) => setForm({ ...form, district: e.target.value })}
-                      placeholder="Chọn quận/huyện"
+                    <select
+                      value={selectedDistrictCode || ''}
+                      onChange={handleDistrictChange}
                       required
-                    />
+                      disabled={!selectedProvinceCode}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      <option value="">Chọn quận/huyện</option>
+                      {districts.map(d => (
+                        <option key={d.code} value={d.code}>{d.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Phường/Xã</label>
-                    <Input
-                      value={form.ward}
-                      onChange={(e) => setForm({ ...form, ward: e.target.value })}
-                      placeholder="Chọn phường/xã"
-                    />
+                    <select
+                      onChange={handleWardChange}
+                      disabled={!selectedDistrictCode}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    >
+                      <option value="">Chọn phường/xã</option>
+                      {wards.map(w => (
+                        <option key={w.code} value={w.code}>{w.name}</option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1">Địa chỉ cụ thể *</label>

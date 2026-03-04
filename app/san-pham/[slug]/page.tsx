@@ -100,6 +100,26 @@ export default function ProductDetailPage() {
     } catch { toast.error('Có lỗi xảy ra'); }
   };
 
+  const handleBuyNow = () => {
+    if (!product || !selectedVariant) return;
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để mua hàng!');
+      openLoginModal();
+      return;
+    }
+    addItem({
+      id: `${product._id}-${selectedVariant.sku}`,
+      productId: product._id,
+      name: product.name,
+      image: product.thumbnail,
+      variant: selectedVariant.name,
+      variantSku: selectedVariant.sku,
+      price: selectedVariant.price,
+      quantity,
+    });
+    window.location.href = '/thanh-toan';
+  };
+
   const handleAddToCart = () => {
     if (!product || !selectedVariant) return;
     if (!isAuthenticated) {
@@ -357,7 +377,7 @@ export default function ProductDetailPage() {
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Thêm vào giỏ
               </Button>
-              <Button size="lg" className="flex-1 h-14 text-lg bg-primary hover:bg-primary-600">
+              <Button size="lg" className="flex-1 h-14 text-lg bg-primary hover:bg-primary-600" onClick={handleBuyNow}>
                 Mua ngay
               </Button>
               <Button size="lg" variant="outline" className="h-14 w-14 flex-shrink-0" onClick={handleToggleWishlist}>

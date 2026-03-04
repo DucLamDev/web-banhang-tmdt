@@ -103,10 +103,10 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="mt-8 pt-6 border-t text-center text-sm text-gray-500">
-          <p>© 2024 MiniShop. All rights reserved.</p>
+          <p>© 2026 MiniShop. All rights reserved.</p>
           <p className="mt-1">
             <MapPin className="inline w-4 h-4 mr-1" />
-            Địa chỉ: 123 Nguyễn Huệ, Quận 1, TP.Hồ Chí Minh
+            Địa chỉ: 54 Liễu Giai, Quận Ba Đình, Hà Nội
           </p>
           <p className="mt-1">
             Điện thoại: 1900 1234 | Email: support@minishop.vn
