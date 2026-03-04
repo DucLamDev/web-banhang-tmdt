@@ -50,7 +50,7 @@ const features = [
 export default function WhyChooseUs() {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-      <h2 className="text-xl font-bold text-gray-800 mb-5 text-center">Tại sao chọn Thế Giới Di Động?</h2>
+      <h2 className="text-xl font-bold text-gray-800 mb-5 text-center">Tại sao chọn MiniShop?</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {features.map((f) => (
           <div key={f.title} className="flex flex-col items-center text-center gap-2 group">
