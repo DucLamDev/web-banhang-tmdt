@@ -163,23 +163,23 @@ export default function ProductDetailPage() {
     <div className="bg-gray-50 min-h-screen">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm">
+        <div className="container mx-auto px-4 py-2 md:py-3">
+          <nav className="flex items-center gap-1 md:gap-2 text-xs md:text-sm overflow-x-auto whitespace-nowrap">
             <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
             <Link href="/danh-muc/laptop" className="text-gray-500 hover:text-primary">Laptop</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-900">{product.brand}</span>
+            <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-gray-400 flex-shrink-0" />
+            <span className="text-gray-900 truncate max-w-[150px] md:max-w-none">{product.brand}</span>
           </nav>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="container mx-auto px-4 py-4 md:py-6 pb-24 md:pb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           {/* Left: Images */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white rounded-xl p-4 border">
-              <div className="relative w-full h-[320px]">
+          <div className="lg:col-span-5 space-y-3 md:space-y-4">
+            <div className="bg-white rounded-xl p-3 md:p-4 border">
+              <div className="relative w-full h-[250px] md:h-[320px]">
                 <Image
                   src={product.images[selectedImage] || product.thumbnail}
                   alt={product.name}
@@ -209,7 +209,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Right: Purchase Section */}
-          <div className="lg:col-span-7 space-y-4">
+          <div className="lg:col-span-7 space-y-3 md:space-y-4">
             <div>
               {product.badges && product.badges.length > 0 && (
                 <div className="flex items-center gap-2 mb-2">
@@ -218,7 +218,7 @@ export default function ProductDetailPage() {
                   ))}
                 </div>
               )}
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              <h1 className="text-lg md:text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -372,8 +372,8 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3">
+            {/* Actions - hidden on mobile (shown in sticky bar) */}
+            <div className="hidden md:flex gap-3">
               <Button size="lg" className="flex-1 h-14 text-lg bg-secondary hover:bg-secondary-600" onClick={handleAddToCart}>
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 Thêm vào giỏ
@@ -432,6 +432,29 @@ export default function ProductDetailPage() {
             <p className="text-gray-700 leading-relaxed">{product.description}</p>
           </div>
         )}
+      </div>
+
+      {/* Mobile sticky CTA - above bottom nav */}
+      <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 bg-white border-t border-gray-200 px-3 py-2.5 flex gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <button
+          onClick={handleToggleWishlist}
+          className="w-11 h-11 flex-shrink-0 rounded-xl border-2 border-gray-200 flex items-center justify-center"
+        >
+          <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-secondary text-secondary' : 'text-gray-400'}`} />
+        </button>
+        <button
+          onClick={handleAddToCart}
+          className="flex-1 h-11 rounded-xl bg-secondary text-white font-semibold text-sm flex items-center justify-center gap-1.5"
+        >
+          <ShoppingCart className="w-4 h-4" />
+          Thêm vào giỏ
+        </button>
+        <button
+          onClick={handleBuyNow}
+          className="flex-1 h-11 rounded-xl bg-primary text-white font-semibold text-sm flex items-center justify-center"
+        >
+          Mua ngay
+        </button>
       </div>
     </div>
   );

@@ -44,18 +44,18 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-6">
+    <div className="bg-gray-50 min-h-screen py-4 md:py-6">
       <div className="container mx-auto px-4">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm mb-6">
+        {/* Breadcrumb - hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-2 text-sm mb-6">
           <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
           <span className="text-gray-900">Tài khoản</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6">
+          {/* Sidebar - hidden on mobile (BottomNav handles nav) */}
+          <div className="hidden lg:block lg:col-span-1">
             <div className="bg-white rounded-xl p-4">
               {/* User Info */}
               <div className="flex items-center gap-3 pb-4 border-b mb-4">
@@ -95,7 +95,7 @@ export default function AccountPage() {
 
           {/* Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-xl p-6">
+            <div className="bg-white rounded-xl p-4 md:p-6">
               <div className="flex items-center justify-between mb-6">
                 <h1 className="text-xl font-bold">Thông tin tài khoản</h1>
                 {!isEditing && (
@@ -154,6 +154,28 @@ export default function AccountPage() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+        {/* Mobile quick nav - shown only on mobile */}
+        <div className="lg:hidden mt-4 bg-white rounded-xl p-3">
+          <div className="grid grid-cols-2 gap-2">
+            {menuItems.filter(i => !i.active).map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 border border-gray-100"
+              >
+                <item.icon className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium text-gray-700">{item.label}</span>
+              </Link>
+            ))}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-3 py-3 rounded-lg border border-red-100 hover:bg-red-50 col-span-2"
+            >
+              <LogOut className="w-5 h-5 text-red-500" />
+              <span className="text-sm font-medium text-red-500">Đăng xuất</span>
+            </button>
           </div>
         </div>
       </div>

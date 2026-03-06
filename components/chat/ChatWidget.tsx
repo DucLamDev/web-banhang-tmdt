@@ -170,7 +170,7 @@ export default function ChatWidget() {
       {/* Chat Button */}
       <button
         onClick={toggleChat}
-        className={`fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${
+        className={`fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-12 h-12 md:w-14 md:h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${
           isChatOpen ? 'bg-gray-600' : 'bg-primary hover:scale-110'
         }`}
       >
@@ -183,7 +183,7 @@ export default function ChatWidget() {
 
       {/* Chat Window */}
       {isChatOpen && (
-        <div className="fixed bottom-24 right-6 z-40 w-96 h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-bounce-in">
+        <div className="fixed bottom-36 right-2 z-40 w-[calc(100vw-16px)] md:bottom-24 md:right-6 md:w-96 h-[420px] md:h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-bounce-in">
           {/* Header */}
           <div className="bg-primary p-4 flex items-center gap-3">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronRight, SlidersHorizontal, Grid3X3, LayoutList, Loader2 } from 'lucide-react';
+import { ChevronRight, SlidersHorizontal, Grid3X3, LayoutList, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '@/components/product/ProductCard';
 import { productApi, categoryApi } from '@/lib/api';
@@ -114,22 +114,82 @@ export default function CategoryPage() {
 
   const hasActiveFilters = selectedPrice !== null || selectedBrands.length > 0;
 
+  const [showMobileFilter, setShowMobileFilter] = useState(false);
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-3">
-          <nav className="flex items-center gap-2 text-sm">
+        <div className="container mx-auto px-4 py-2 md:py-3">
+          <nav className="flex items-center gap-2 text-xs md:text-sm">
             <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
-            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <ChevronRight className="w-3 h-3 md:w-4 md:h-4 text-gray-400" />
             <span className="text-gray-900">{categoryName}</span>
           </nav>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
+      {/* Mobile Filter Sheet */}
+      {showMobileFilter && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilter(false)} />
+          <div className="absolute bottom-16 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[75vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b sticky top-0 bg-white">
+              <h3 className="font-bold text-base flex items-center gap-2">
+                <SlidersHorizontal className="w-4 h-4" />
+                Bộ lọc sản phẩm
+              </h3>
+              <button onClick={() => setShowMobileFilter(false)} className="p-1.5 rounded-full hover:bg-gray-100">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-4 space-y-5">
+              <div>
+                <h4 className="font-semibold mb-3 text-sm">Mức giá</h4>
+                <div className="space-y-2">
+                  {priceRanges.map((range) => (
+                    <label key={range.label} className="flex items-center gap-3 cursor-pointer py-1">
+                      <input type="radio" name="price-mobile" checked={selectedPrice === range.label}
+                        onChange={() => setSelectedPrice(selectedPrice === range.label ? null : range.label)}
+                        className="w-4 h-4 accent-teal-500" />
+                      <span className="text-sm">{range.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              {allBrands.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-3 text-sm">Thương hiệu</h4>
+                  <div className="grid grid-cols-2 gap-2">
+                    {allBrands.map((brand) => (
+                      <label key={brand} className="flex items-center gap-2 cursor-pointer p-2 rounded-lg border border-gray-100 hover:bg-gray-50">
+                        <input type="checkbox" checked={selectedBrands.includes(brand)}
+                          onChange={() => toggleBrand(brand)}
+                          className="w-4 h-4 accent-teal-500 rounded" />
+                        <span className="text-sm">{brand}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-2 pt-2">
+                <button onClick={() => { clearFilters(); setShowMobileFilter(false); }}
+                  className="flex-1 py-2.5 rounded-xl border border-gray-300 text-sm font-medium">
+                  Xóa bộ lọc
+                </button>
+                <button onClick={() => setShowMobileFilter(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-medium">
+                  Xem kết quả ({products.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-4 md:py-6">
         <div className="flex gap-6">
-          {/* Sidebar Filters */}
+          {/* Sidebar Filters - desktop only */}
           <div className="w-64 flex-shrink-0 hidden lg:block">
             <div className="bg-white rounded-xl p-4 sticky top-32">
               <h3 className="font-bold mb-4 flex items-center gap-2">
@@ -183,37 +243,49 @@ export default function CategoryPage() {
           {/* Products */}
           <div className="flex-1">
             {/* Header */}
-            <div className="bg-white rounded-xl p-4 mb-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-xl font-bold">{categoryName}</h1>
-                  <p className="text-sm text-gray-500 mt-1">{products.length} sản phẩm</p>
+            <div className="bg-white rounded-xl p-3 md:p-4 mb-3 md:mb-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <h1 className="text-base md:text-xl font-bold truncate">{categoryName}</h1>
+                  <p className="text-xs md:text-sm text-gray-500">{products.length} sản phẩm</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {/* Mobile filter button */}
+                  <button
+                    onClick={() => setShowMobileFilter(true)}
+                    className="lg:hidden flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm font-medium relative"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    Lọc
+                    {hasActiveFilters && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full" />
+                    )}
+                  </button>
+
                   {/* Sort */}
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="border rounded-lg px-3 py-2 text-sm"
+                    className="border rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm"
                   >
                     {sortOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                     ))}
                   </select>
 
-                  {/* View Mode */}
-                  <div className="flex border rounded-lg overflow-hidden">
+                  {/* View Mode - desktop only */}
+                  <div className="hidden md:flex border rounded-lg overflow-hidden">
                     <button
                       onClick={() => setViewMode('grid')}
                       className={`p-2 ${viewMode === 'grid' ? 'bg-primary text-white' : 'bg-white'}`}
                     >
-                      <Grid3X3 className="w-5 h-5" />
+                      <Grid3X3 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setViewMode('list')}
                       className={`p-2 ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-white'}`}
                     >
-                      <LayoutList className="w-5 h-5" />
+                      <LayoutList className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

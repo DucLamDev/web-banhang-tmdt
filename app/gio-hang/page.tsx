@@ -54,19 +54,19 @@ export default function CartPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-6">
+    <div className="bg-gray-50 min-h-screen py-4 md:py-6 pb-32 md:pb-6">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm mb-6">
+        <nav className="flex items-center gap-2 text-xs md:text-sm mb-4 md:mb-6">
           <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
           <span className="text-gray-900">Giỏ hàng ({items.length} sản phẩm)</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white rounded-xl p-4">
+            <div className="bg-white rounded-xl p-3 md:p-4">
               <div className="flex items-center justify-between mb-4">
                 <h1 className="text-xl font-bold">Giỏ hàng của bạn</h1>
                 <button onClick={clearCart} className="text-sm text-red-500 hover:underline">
@@ -76,8 +76,8 @@ export default function CartPage() {
 
               <div className="divide-y">
                 {items.map((item) => (
-                  <div key={item.id} className="py-4 flex gap-4">
-                    <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <div key={item.id} className="py-3 md:py-4 flex gap-3 md:gap-4">
+                    <div className="w-16 h-16 md:w-24 md:h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       <Image
                         src={item.image}
                         alt={item.name}
@@ -125,8 +125,8 @@ export default function CartPage() {
             </div>
           </div>
 
-          {/* Order Summary */}
-          <div className="space-y-4">
+          {/* Order Summary - desktop only */}
+          <div className="hidden lg:block space-y-4">
             {/* Voucher */}
             <div className="bg-white rounded-xl p-4">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
@@ -194,6 +194,20 @@ export default function CartPage() {
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky checkout bar */}
+      <div className="lg:hidden fixed bottom-16 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-gray-500">{items.length} sản phẩm</p>
+            <p className="text-base font-bold text-secondary">{formatPrice(total)}</p>
+          </div>
+          <Button className="h-11 px-6 text-sm flex-shrink-0" onClick={handleCheckout}>
+            Đặt hàng
+            <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
         </div>
       </div>
     </div>

@@ -164,10 +164,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-6">
+    <div className="bg-gray-50 min-h-screen py-4 md:py-6 pb-32 md:pb-6">
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm mb-6">
+        <nav className="flex items-center gap-2 text-xs md:text-sm mb-4 md:mb-6">
           <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
           <Link href="/gio-hang" className="text-gray-500 hover:text-primary">Giỏ hàng</Link>
@@ -176,11 +176,11 @@ export default function CheckoutPage() {
         </nav>
 
         <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
             {/* Left Column */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
               {/* Shipping Address */}
-              <div className="bg-white rounded-xl p-6">
+              <div className="bg-white rounded-xl p-4 md:p-6">
                 <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
                   <MapPin className="w-5 h-5 text-primary" />
                   Địa chỉ giao hàng
@@ -268,7 +268,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment Method */}
-              <div className="bg-white rounded-xl p-6">
+              <div className="bg-white rounded-xl p-4 md:p-6">
                 <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
                   <CreditCard className="w-5 h-5 text-primary" />
                   Phương thức thanh toán
@@ -301,8 +301,8 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* Right Column - Order Summary */}
-            <div className="space-y-4">
+            {/* Right Column - Order Summary - desktop only */}
+            <div className="hidden lg:block space-y-4">
               <div className="bg-white rounded-xl p-6 sticky top-4">
                 <h2 className="text-lg font-bold mb-4">Đơn hàng của bạn</h2>
                 
@@ -354,6 +354,25 @@ export default function CheckoutPage() {
             </div>
           </div>
         </form>
+      </div>
+
+      {/* Mobile sticky order bar */}
+      <div className="lg:hidden fixed bottom-16 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)]">
+        <div className="px-4 py-2.5 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-gray-500">Tổng đơn hàng</p>
+            <p className="text-base font-bold text-primary">{formatPrice(total)}</p>
+          </div>
+          <Button
+            type="submit"
+            form="checkout-form"
+            className="h-11 px-6 text-sm flex-shrink-0"
+            disabled={isProcessing}
+            onClick={handleSubmit}
+          >
+            {isProcessing ? 'Đang xử lý...' : 'Đặt hàng'}
+          </Button>
+        </div>
       </div>
     </div>
   );

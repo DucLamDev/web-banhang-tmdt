@@ -82,10 +82,10 @@ export default function MyOrdersPage() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-6">
+    <div className="bg-gray-50 min-h-screen py-4 md:py-6">
       <div className="container mx-auto px-4">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm mb-6">
+        {/* Breadcrumb - hidden on mobile */}
+        <nav className="hidden md:flex items-center gap-2 text-sm mb-6">
           <Link href="/" className="text-gray-500 hover:text-primary">Trang chủ</Link>
           <ChevronRight className="w-4 h-4 text-gray-400" />
           <span className="text-gray-900">Đơn hàng của tôi</span>
@@ -93,32 +93,33 @@ export default function MyOrdersPage() {
 
         <div className="bg-white rounded-xl shadow-sm">
           {/* Header */}
-          <div className="p-6 border-b">
+          <div className="p-4 md:p-6 border-b">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold">Đơn hàng của tôi</h1>
-                <p className="text-sm text-gray-500 mt-1">Xin chào, {user?.fullName}</p>
+                <h1 className="text-lg md:text-xl font-bold">Đơn hàng của tôi</h1>
+                <p className="text-sm text-gray-500 mt-0.5">Xin chào, {user?.fullName}</p>
               </div>
               <Link href="/don-hang/tra-cuu">
-                <Button variant="outline" size="sm">
-                  <Search className="w-4 h-4 mr-2" />
-                  Tra cứu đơn hàng
+                <Button variant="outline" size="sm" className="text-xs md:text-sm">
+                  <Search className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                  <span className="hidden md:inline">Tra cứu đơn hàng</span>
+                  <span className="md:hidden">Tra cứu</span>
                 </Button>
               </Link>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex border-b overflow-x-auto">
+          <div className="flex border-b overflow-x-auto hide-scrollbar">
             {tabs.map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 whitespace-nowrap text-sm border-b-2 transition-colors ${
+                className={`px-3 md:px-5 py-2.5 md:py-3 whitespace-nowrap text-xs md:text-sm border-b-2 transition-colors flex-shrink-0 ${
                   activeTab === tab ? 'border-primary text-primary font-medium' : 'border-transparent text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {tabLabels[tab]}
+                {tab === 'all' ? 'Tất cả' : tabLabels[tab].split(' ')[tab === 'confirmed' ? 1 : 0]}
                 <span className="ml-1 text-xs text-gray-400">
                   ({tab === 'all' ? orders.length : orders.filter(o => o.status === tab).length})
                 </span>
@@ -156,7 +157,7 @@ export default function MyOrdersPage() {
           ) : (
             <div className="divide-y">
               {filtered.map(order => (
-                <div key={order._id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div key={order._id} className="p-4 md:p-6 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <div className="flex items-center gap-3">

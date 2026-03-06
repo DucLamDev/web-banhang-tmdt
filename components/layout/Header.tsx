@@ -8,8 +8,7 @@ import {
   Search, 
   ShoppingCart, 
   User, 
-  MapPin, 
-  Menu,
+  MapPin,
   Phone,
   Laptop,
   Watch,
@@ -42,7 +41,6 @@ const categories = [
 export default function Header() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -73,17 +71,17 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50">
         {/* Top Banner */}
-        <div className="bg-gradient-to-r from-secondary-600 to-secondary-500 text-white text-center py-1 text-sm">
+        <div className="bg-gradient-to-r from-secondary-600 to-secondary-500 text-white text-center py-1 text-xs md:text-sm">
           <span>🎉 KHAI XUÂN NĂM MÃ - SĂN DEAL CỰC ĐÃ - GIẢM ĐẾN 50% 🎉</span>
         </div>
 
         {/* Main Header */}
         <div className="bg-primary">
-          <div className="container-custom py-3">
-            <div className="flex items-center gap-4">
+          <div className="container-custom py-2 md:py-3">
+            <div className="flex items-center gap-2 md:gap-4">
               {/* Logo */}
               <Link href="/" className="flex-shrink-0">
-                <Image src="/logo.svg" alt="MiniShop" width={120} height={40} priority className="h-10 w-auto" />
+                <Image src="/logo.svg" alt="MiniShop" width={120} height={40} priority className="h-8 md:h-10 w-auto" />
               </Link>
 
               {/* Search Bar */}
@@ -106,7 +104,7 @@ export default function Header() {
               </form>
 
               {/* Right Actions */}
-              <div className="flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-2">
                 {/* Login/User */}
                 {mounted && isAuthenticated && user ? (
                   <div className="relative group">
@@ -175,15 +173,20 @@ export default function Header() {
                   <MapPin className="w-5 h-5" />
                   <span className="text-sm font-medium">Hồ Chí Minh</span>
                 </button>
-
-                {/* Mobile Menu Toggle */}
-                <button 
-                  onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className="lg:hidden p-2 rounded-lg hover:bg-primary-600 transition-colors"
-                >
-                  <Menu className="w-6 h-6" />
-                </button>
               </div>
+
+              {/* Mobile: cart icon only */}
+              <button
+                onClick={openCartDrawer}
+                className="md:hidden relative p-2 rounded-lg hover:bg-primary-600 transition-colors text-white"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {mounted && cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] min-w-[16px] h-4 rounded-full flex items-center justify-center font-bold px-0.5">
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -207,27 +210,6 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="lg:hidden bg-white border-b shadow-lg">
-            <div className="container-custom py-4">
-              <ul className="space-y-1">
-                {categories.map((category) => (
-                  <li key={category.slug}>
-                    <Link 
-                      href={`/danh-muc/${category.slug}`}
-                      onClick={() => setShowMobileMenu(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                      <category.icon className="w-5 h-5 text-gray-500" />
-                      <span className="font-medium text-gray-700">{category.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Modals */}
