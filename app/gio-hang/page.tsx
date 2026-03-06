@@ -11,23 +11,23 @@ import { formatPrice } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
 export default function CartPage() {
-  const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
+  const { items, updateQuantity, removeItem, getTotal, clearCart, appliedVoucher, removeVoucher, getVoucherDiscount } = useCartStore();
   const { isAuthenticated } = useAuthStore();
   const { openLoginModal } = useUIStore();
   const [voucherCode, setVoucherCode] = useState('');
-  const [discount, setDiscount] = useState(0);
 
   const subtotal = getTotal();
+  const discount = getVoucherDiscount(subtotal);
   const shippingFee = subtotal >= 2000000 ? 0 : 30000;
   const total = subtotal - discount + shippingFee;
 
   const handleApplyVoucher = () => {
-    if (voucherCode.toUpperCase() === 'GIAM10') {
-      const discountAmount = subtotal * 0.1;
-      setDiscount(discountAmount);
+    const normalizedCode = (voucherCode || appliedVoucher?.code || '').trim().toUpperCase();
+
+    if (appliedVoucher && normalizedCode === appliedVoucher.code) {
       toast.success('Áp dụng mã giảm giá thành công!');
     } else {
-      toast.error('Mã giảm giá không hợp lệ');
+      toast.error('Hãy áp mã từ trang chi tiết sản phẩm hoặc nhập đúng mã đã chọn');
     }
   };
 
@@ -136,12 +136,22 @@ export default function CartPage() {
               <div className="flex gap-2">
                 <Input
                   placeholder="Nhập mã giảm giá"
-                  value={voucherCode}
+                  value={voucherCode || appliedVoucher?.code || ''}
                   onChange={(e) => setVoucherCode(e.target.value)}
                 />
                 <Button variant="outline" onClick={handleApplyVoucher}>Áp dụng</Button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">Thử mã: GIAM10</p>
+              {appliedVoucher ? (
+                <div className="mt-2 flex items-center justify-between gap-3 rounded-lg bg-green-50 px-3 py-2 text-xs text-green-700">
+                  <span>
+                    Đã áp dụng <strong>{appliedVoucher.code}</strong>
+                    {appliedVoucher.description ? ` · ${appliedVoucher.description}` : ''}
+                  </span>
+                  <button onClick={removeVoucher} className="text-red-500 hover:underline">Bỏ mã</button>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500 mt-2">Hãy áp mã từ trang chi tiết sản phẩm laptop để dùng ưu đãi.</p>
+              )}
             </div>
 
             {/* Summary */}

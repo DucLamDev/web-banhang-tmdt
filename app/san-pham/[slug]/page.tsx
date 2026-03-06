@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { Star, Heart, ShoppingCart, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus, Check, Loader2 } from 'lucide-react';
+import { Star, Heart, ShoppingCart, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus, Check, Loader2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCartStore, useAuthStore, useUIStore } from '@/lib/store';
 import { formatPrice } from '@/lib/utils';
-import { productApi, userApi } from '@/lib/api';
+import { productApi, userApi, voucherApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 interface Variant {
@@ -28,6 +28,11 @@ interface Product {
   name: string;
   slug: string;
   brand: string;
+  category?: {
+    _id: string;
+    name: string;
+    slug: string;
+  };
   shortDescription?: string;
   description: string;
   images: string[];
@@ -42,6 +47,16 @@ interface Product {
   totalSold?: number;
 }
 
+interface PublicVoucher {
+  _id: string;
+  code: string;
+  description: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  minOrderValue: number;
+  maxDiscount?: number;
+}
+
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -54,7 +69,9 @@ export default function ProductDetailPage() {
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const { addItem } = useCartStore();
+  const [availableVouchers, setAvailableVouchers] = useState<PublicVoucher[]>([]);
+  const [voucherCode, setVoucherCode] = useState('');
+  const { addItem, appliedVoucher, applyVoucher, removeVoucher } = useCartStore();
   const { isAuthenticated } = useAuthStore();
   const { openLoginModal } = useUIStore();
 
@@ -90,6 +107,72 @@ export default function ProductDetailPage() {
       if (variant) setSelectedVariant(variant);
     }
   }, [selectedStorage, selectedColor, product]);
+
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      if (!product?.category?.slug) {
+        setAvailableVouchers([]);
+        return;
+      }
+
+      try {
+        const response = await voucherApi.getPublic({
+          displayLocation: 'product_detail',
+          categorySlug: product.category.slug,
+        });
+        setAvailableVouchers(response.data || []);
+      } catch {
+        setAvailableVouchers([]);
+      }
+    };
+
+    fetchVouchers();
+  }, [product?.category?.slug]);
+
+  const getDiscountAmount = (voucher: PublicVoucher | null, subtotal: number) => {
+    if (!voucher || subtotal < voucher.minOrderValue) return 0;
+
+    let discountValue = voucher.type === 'percent'
+      ? subtotal * (voucher.value / 100)
+      : voucher.value;
+
+    if (voucher.maxDiscount && discountValue > voucher.maxDiscount) {
+      discountValue = voucher.maxDiscount;
+    }
+
+    return Math.max(0, discountValue);
+  };
+
+  const handleApplyVoucher = (code?: string) => {
+    const normalizedCode = (code || voucherCode).trim().toUpperCase();
+    if (!normalizedCode) {
+      toast.error('Vui lòng nhập mã giảm giá');
+      return;
+    }
+
+    const voucher = availableVouchers.find((item) => item.code === normalizedCode);
+    if (!voucher) {
+      toast.error('Mã giảm giá không hợp lệ hoặc không áp dụng cho sản phẩm này');
+      return;
+    }
+
+    const subtotal = (selectedVariant?.price || 0) * quantity;
+    if (subtotal < voucher.minOrderValue) {
+      toast.error(`Đơn tối thiểu ${formatPrice(voucher.minOrderValue)} để dùng mã này`);
+      return;
+    }
+
+    applyVoucher({
+      code: voucher.code,
+      description: voucher.description,
+      type: voucher.type,
+      value: voucher.value,
+      minOrderValue: voucher.minOrderValue,
+      maxDiscount: voucher.maxDiscount,
+    });
+    setVoucherCode(voucher.code);
+    toast.success(`Đã áp dụng mã ${voucher.code}`);
+  };
 
   const handleToggleWishlist = async () => {
     if (!isAuthenticated) { toast.error('Vui lòng đăng nhập!'); openLoginModal(); return; }
@@ -158,6 +241,20 @@ export default function ProductDetailPage() {
   }
 
   const discount = selectedVariant && selectedVariant.originalPrice > selectedVariant.price ? Math.round((1 - selectedVariant.price / selectedVariant.originalPrice) * 100) : 0;
+  const lineSubtotal = (selectedVariant?.price || 0) * quantity;
+  const currentVoucher = appliedVoucher && availableVouchers.some((voucher) => voucher.code === appliedVoucher.code)
+    ? {
+        _id: appliedVoucher.code,
+        code: appliedVoucher.code,
+        description: appliedVoucher.description || '',
+        type: appliedVoucher.type,
+        value: appliedVoucher.value,
+        minOrderValue: appliedVoucher.minOrderValue,
+        maxDiscount: appliedVoucher.maxDiscount,
+      }
+    : null;
+  const voucherDiscount = currentVoucher ? getDiscountAmount(currentVoucher, lineSubtotal) : 0;
+  const finalPrice = Math.max(0, lineSubtotal - voucherDiscount);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -279,7 +376,7 @@ export default function ProductDetailPage() {
             {/* Price Box */}
             <div className="bg-white rounded-xl border p-4">
               <div className="flex items-baseline gap-3 mb-2">
-                <span className="text-3xl font-bold text-secondary">{formatPrice((selectedVariant?.price || 0) * quantity)}</span>
+                <span className="text-3xl font-bold text-secondary">{formatPrice(finalPrice)}</span>
                 {discount > 0 && (
                   <>
                     <span className="text-lg text-gray-400 line-through">{formatPrice((selectedVariant?.originalPrice || 0) * quantity)}</span>
@@ -287,30 +384,82 @@ export default function ProductDetailPage() {
                   </>
                 )}
               </div>
+              {voucherDiscount > 0 && currentVoucher && (
+                <div className="mb-2 inline-flex items-center gap-2 rounded-lg bg-green-50 px-3 py-1.5 text-sm text-green-700">
+                  <Tag className="w-4 h-4" />
+                  <span>Đã áp dụng {currentVoucher.code} - giảm {formatPrice(voucherDiscount)}</span>
+                </div>
+              )}
               {quantity > 1 && (
                 <p className="text-sm text-gray-500">Đơn giá: {formatPrice(selectedVariant?.price || 0)} × {quantity}</p>
               )}
             </div>
 
-            {/* Promotional Banners - TGDD Style */}
-            <div className="space-y-3">
-              <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
-                <div className="flex items-center gap-3">
-                  <div className="bg-secondary text-white px-3 py-1 rounded-lg font-bold text-sm">GIẢM THÊM 200.000₫</div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">Với HSSV (Từ THPT trở lên), Giáo viên, Giảng viên</p>
-                  </div>
+            {/* Voucher area */}
+            {availableVouchers.length > 0 && (
+              <div className="bg-white rounded-xl border p-4 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Tag className="w-5 h-5 text-primary" />
+                    Mã giảm giá áp dụng cho {product.category?.name?.toLowerCase() || 'sản phẩm'}
+                  </h3>
+                  {appliedVoucher && (
+                    <button
+                      onClick={() => {
+                        removeVoucher();
+                        setVoucherCode('');
+                        toast.success('Đã bỏ mã giảm giá');
+                      }}
+                      className="text-xs text-red-500 hover:underline"
+                    >
+                      Bỏ mã
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    value={voucherCode}
+                    onChange={(e) => setVoucherCode(e.target.value.toUpperCase())}
+                    placeholder="Nhập mã giảm giá"
+                    className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                  <Button variant="outline" onClick={() => handleApplyVoucher()}>
+                    Áp mã
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  {availableVouchers.map((voucher, idx) => {
+                    const previewDiscount = getDiscountAmount(voucher, lineSubtotal);
+
+                    return (
+                      <div key={voucher._id || voucher.code} className={`rounded-xl border p-3 ${idx % 2 === 0 ? 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200' : 'bg-gradient-to-r from-primary/5 to-emerald-50 border-primary/20'}`}>
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleApplyVoucher(voucher.code)}
+                            className="bg-primary text-white px-3 py-1 rounded-lg font-bold text-sm whitespace-nowrap"
+                          >
+                            {voucher.code}
+                          </button>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-800">{voucher.description || 'Mã giảm giá cho sản phẩm này'}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {voucher.type === 'percent' ? `Giảm ${voucher.value}%` : `Giảm ${formatPrice(voucher.value)}`}
+                              {voucher.maxDiscount ? ` · Tối đa ${formatPrice(voucher.maxDiscount)}` : ''}
+                              {voucher.minOrderValue > 0 ? ` · Đơn từ ${formatPrice(voucher.minOrderValue)}` : ''}
+                            </p>
+                            {previewDiscount > 0 && (
+                              <p className="text-xs text-green-600 mt-1">Tiết kiệm ngay {formatPrice(previewDiscount)} với cấu hình hiện tại</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 border border-yellow-200">
-                <div className="flex items-center gap-3">
-                  <div className="bg-warning text-white px-3 py-1 rounded-lg font-bold text-sm">NHẬP MÃ LAPTOP.200K</div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">GIẢM NGAY 200.000₫ - Họạt động này sẽ giúp hàng</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Storage Selection */}
             {storages.length > 1 && (

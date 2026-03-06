@@ -62,14 +62,27 @@ interface SimpleCartItem {
   quantity: number;
 }
 
+interface AppliedVoucher {
+  code: string;
+  description?: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  minOrderValue: number;
+  maxDiscount?: number;
+}
+
 interface CartStore {
   cart: CartState;
   items: SimpleCartItem[];
+  appliedVoucher: AppliedVoucher | null;
   setCart: (cart: CartState) => void;
   addItem: (item: SimpleCartItem) => void;
   updateQuantity: (id: string, quantity: number) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
+  applyVoucher: (voucher: AppliedVoucher) => void;
+  removeVoucher: () => void;
+  getVoucherDiscount: (subtotal?: number) => number;
   itemCount: () => number;
   getTotal: () => number;
 }
@@ -129,6 +142,7 @@ export const useCartStore = create<CartStore>()(
         total: 0,
       },
       items: [],
+      appliedVoucher: null,
       setCart: (cart) => set({ cart }),
       addItem: (item) => set((state) => {
         const existingIndex = state.items.findIndex(i => i.id === item.id);
@@ -150,8 +164,29 @@ export const useCartStore = create<CartStore>()(
       })),
       clearCart: () => set({
         cart: { items: [], subtotal: 0, discount: 0, total: 0 },
-        items: []
+        items: [],
+        appliedVoucher: null,
       }),
+      applyVoucher: (voucher) => set({ appliedVoucher: voucher }),
+      removeVoucher: () => set({ appliedVoucher: null }),
+      getVoucherDiscount: (subtotal) => {
+        const voucher = get().appliedVoucher;
+        const effectiveSubtotal = subtotal ?? get().getTotal();
+
+        if (!voucher || effectiveSubtotal < voucher.minOrderValue) {
+          return 0;
+        }
+
+        let discount = voucher.type === 'percent'
+          ? effectiveSubtotal * (voucher.value / 100)
+          : voucher.value;
+
+        if (voucher.maxDiscount && discount > voucher.maxDiscount) {
+          discount = voucher.maxDiscount;
+        }
+
+        return Math.max(0, discount);
+      },
       itemCount: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
       getTotal: () => get().items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     }),

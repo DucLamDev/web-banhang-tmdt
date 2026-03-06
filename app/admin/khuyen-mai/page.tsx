@@ -21,10 +21,43 @@ interface Voucher {
   startDate?: string;
   endDate?: string;
   isActive: boolean;
+  displayLocation?: 'all' | 'product_detail';
+  targetCategorySlug?: string;
   createdAt: string;
 }
 
-const emptyForm: { code: string; description: string; type: 'percent' | 'fixed'; value: number; minOrderValue: number; maxDiscount: number; usageLimit: number; startDate: string; endDate: string; isActive: boolean } = { code: '', description: '', type: 'percent', value: 0, minOrderValue: 0, maxDiscount: 0, usageLimit: 100, startDate: '', endDate: '', isActive: true };
+const emptyForm: { code: string; description: string; type: 'percent' | 'fixed'; value: number; minOrderValue: number; maxDiscount: number; usageLimit: number; startDate: string; endDate: string; isActive: boolean; displayLocation: 'all' | 'product_detail'; targetCategorySlug: string } = { code: '', description: '', type: 'percent', value: 0, minOrderValue: 0, maxDiscount: 0, usageLimit: 100, startDate: '', endDate: '', isActive: true, displayLocation: 'all', targetCategorySlug: '' };
+
+const buildVoucherPayload = (form: typeof emptyForm) => {
+  const payload: Record<string, string | number | boolean> = {
+    code: form.code.trim().toUpperCase(),
+    description: form.description.trim(),
+    type: form.type,
+    value: Number(form.value),
+    minOrderValue: Number(form.minOrderValue || 0),
+    usageLimit: Number(form.usageLimit || 0),
+    isActive: form.isActive,
+    displayLocation: form.displayLocation,
+  };
+
+  if (form.targetCategorySlug.trim()) {
+    payload.targetCategorySlug = form.targetCategorySlug.trim();
+  }
+
+  if (form.maxDiscount > 0) {
+    payload.maxDiscount = Number(form.maxDiscount);
+  }
+
+  if (form.startDate) {
+    payload.startDate = form.startDate;
+  }
+
+  if (form.endDate) {
+    payload.endDate = form.endDate;
+  }
+
+  return payload;
+};
 
 export default function AdminPromotionsPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
@@ -76,6 +109,8 @@ export default function AdminPromotionsPage() {
       minOrderValue: v.minOrderValue, maxDiscount: v.maxDiscount || 0, usageLimit: v.usageLimit,
       startDate: v.startDate ? v.startDate.split('T')[0] : '', endDate: v.endDate ? v.endDate.split('T')[0] : '',
       isActive: v.isActive,
+      displayLocation: v.displayLocation || 'all',
+      targetCategorySlug: v.targetCategorySlug || '',
     });
     setEditingId(v._id);
     setShowForm(true);
@@ -84,11 +119,13 @@ export default function AdminPromotionsPage() {
   const handleSubmit = async () => {
     if (!form.code || !form.value) { toast.error('Vui lòng điền mã và giá trị'); return; }
     try {
+      const payload = buildVoucherPayload(form);
+
       if (editingId) {
-        await adminApi.updateVoucher(editingId, form);
+        await adminApi.updateVoucher(editingId, payload);
         toast.success('Cập nhật thành công!');
       } else {
-        await adminApi.createVoucher(form);
+        await adminApi.createVoucher(payload);
         toast.success('Tạo mã giảm giá thành công!');
       }
       resetForm();
@@ -172,6 +209,25 @@ export default function AdminPromotionsPage() {
               <label className="block text-sm font-medium mb-1">Ngày kết thúc</label>
               <Input type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} />
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Hiển thị tại</label>
+              <select value={form.displayLocation} onChange={e => setForm({ ...form, displayLocation: e.target.value as 'all' | 'product_detail' })}
+                className="w-full border rounded-lg px-3 py-2 text-sm">
+                <option value="all">Mọi nơi</option>
+                <option value="product_detail">Trang chi tiết sản phẩm</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Slug danh mục</label>
+              <Input
+                value={form.targetCategorySlug}
+                onChange={e => setForm({ ...form, targetCategorySlug: e.target.value.toLowerCase() })}
+                placeholder="VD: laptop"
+              />
+            </div>
+            <div className="flex items-end text-xs text-gray-500">
+              Để trống nếu mã áp dụng cho mọi danh mục. Nhập `laptop` để chỉ hiện ở trang chi tiết laptop.
+            </div>
             <div className="flex items-end">
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={form.isActive} onChange={e => setForm({ ...form, isActive: e.target.checked })} className="rounded" />
@@ -243,6 +299,7 @@ export default function AdminPromotionsPage() {
                   <th className="text-left p-4 font-medium text-sm">Mã</th>
                   <th className="text-left p-4 font-medium text-sm">Mô tả</th>
                   <th className="text-left p-4 font-medium text-sm">Loại</th>
+                  <th className="text-left p-4 font-medium text-sm">Hiển thị</th>
                   <th className="text-left p-4 font-medium text-sm">Đơn tối thiểu</th>
                   <th className="text-left p-4 font-medium text-sm">Sử dụng</th>
                   <th className="text-left p-4 font-medium text-sm">Thời hạn</th>
@@ -261,6 +318,10 @@ export default function AdminPromotionsPage() {
                       <td className="p-4 text-sm">{v.description || '—'}</td>
                       <td className="p-4 text-sm font-medium">
                         {v.type === 'percent' ? `${v.value}%` : formatPrice(v.value)}
+                      </td>
+                      <td className="p-4 text-xs text-gray-600">
+                        {v.displayLocation === 'product_detail' ? 'Chi tiết SP' : 'Mọi nơi'}
+                        {v.targetCategorySlug ? ` · ${v.targetCategorySlug}` : ''}
                       </td>
                       <td className="p-4 text-sm">{formatPrice(v.minOrderValue)}</td>
                       <td className="p-4">

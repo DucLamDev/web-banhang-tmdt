@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, MapPin, CreditCard, Truck, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, MapPin, CreditCard, Truck, CheckCircle2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore, useAuthStore } from '@/lib/store';
@@ -22,7 +22,7 @@ const paymentMethods = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getTotal, clearCart } = useCartStore();
+  const { items, getTotal, clearCart, appliedVoucher, getVoucherDiscount } = useCartStore();
   const { user, isAuthenticated } = useAuthStore();
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -106,8 +106,9 @@ export default function CheckoutPage() {
   };
 
   const subtotal = getTotal();
+  const discount = getVoucherDiscount(subtotal);
   const shippingFee = subtotal >= 2000000 ? 0 : 30000;
-  const total = subtotal + shippingFee;
+  const total = subtotal - discount + shippingFee;
 
   useEffect(() => {
     if (!mounted) return;
@@ -140,6 +141,7 @@ export default function CheckoutPage() {
         },
         paymentMethod,
         note: form.note,
+        voucherCode: appliedVoucher?.code,
         items: items.map((item) => ({
           productId: item.productId,
           variantSku: item.variantSku,
@@ -329,6 +331,12 @@ export default function CheckoutPage() {
                     <span className="text-gray-600">Tạm tính</span>
                     <span>{formatPrice(subtotal)}</span>
                   </div>
+                  {discount > 0 && appliedVoucher && (
+                    <div className="flex justify-between text-green-600">
+                      <span className="flex items-center gap-1"><Tag className="w-4 h-4" /> {appliedVoucher.code}</span>
+                      <span>-{formatPrice(discount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600">Phí vận chuyển</span>
                     <span>{shippingFee === 0 ? <span className="text-green-600">Miễn phí</span> : formatPrice(shippingFee)}</span>

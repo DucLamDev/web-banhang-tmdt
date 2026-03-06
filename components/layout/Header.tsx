@@ -191,16 +191,16 @@ export default function Header() {
           </div>
 
           {/* Categories Navigation */}
-          <nav className="hidden lg:block border-t border-primary-600">
+          <nav className="hidden md:block border-t border-primary-600">
             <div className="container-custom">
-              <ul className="flex items-center gap-1 py-2 overflow-x-auto">
+              <ul className="flex items-center gap-1 py-2 overflow-x-auto hide-scrollbar">
                 {categories.map((category) => (
                   <li key={category.slug}>
                     <Link 
                       href={`/danh-muc/${category.slug}`}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-primary-600 transition-colors text-sm font-medium whitespace-nowrap"
+                      className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg hover:bg-primary-600 transition-colors text-xs lg:text-sm font-medium whitespace-nowrap"
                     >
-                      <category.icon className="w-4 h-4" />
+                      <category.icon className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                       {category.name}
                     </Link>
                   </li>

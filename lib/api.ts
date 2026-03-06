@@ -90,6 +90,10 @@ export const cartApi = {
   clear: () => api.delete('/cart'),
 };
 
+export const voucherApi = {
+  getPublic: (params?: Record<string, unknown>) => api.get('/vouchers/public', { params }),
+};
+
 // Order APIs
 export const orderApi = {
   create: (data: Record<string, unknown>) => api.post('/orders', data),
