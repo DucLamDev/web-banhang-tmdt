@@ -195,7 +195,10 @@ export default function Header() {
             <div className="container-custom">
               <ul className="flex items-center gap-1 py-2 overflow-x-auto hide-scrollbar">
                 {categories.map((category) => (
-                  <li key={category.slug}>
+                  <li
+                    key={category.slug}
+                    className={category.slug === 'sim-the-cao' || category.slug === 'dich-vu' ? 'md:hidden lg:block' : ''}
+                  >
                     <Link 
                       href={`/danh-muc/${category.slug}`}
                       className="flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg hover:bg-primary-600 transition-colors text-xs lg:text-sm font-medium whitespace-nowrap"
