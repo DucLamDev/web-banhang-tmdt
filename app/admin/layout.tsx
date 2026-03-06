@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, MessageSquare, 
-  Settings, ChevronLeft, Menu, LogOut, Tag, Image as ImageIcon, Truck, Gift
+  Settings, ChevronLeft, Menu, LogOut, Tag, Truck, Gift
 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
@@ -17,7 +17,6 @@ const menuItems = [
   { icon: Truck, label: 'Vận chuyển', href: '/admin/van-chuyen' },
   { icon: Users, label: 'Khách hàng', href: '/admin/khach-hang' },
   { icon: Gift, label: 'Khuyến mãi', href: '/admin/khuyen-mai' },
-  { icon: ImageIcon, label: 'Banner', href: '/admin/banner' },
   { icon: MessageSquare, label: 'Chat', href: '/admin/chat' },
   { icon: Settings, label: 'Cài đặt', href: '/admin/cai-dat' },
 ];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -43,6 +43,7 @@ export default function Header() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const { user, isAuthenticated, logout } = useAuthStore();
   const { itemCount } = useCartStore();
@@ -54,6 +55,10 @@ export default function Header() {
     openCartDrawer,
     closeCartDrawer 
   } = useUIStore();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const cartItemCount = itemCount();
 
@@ -103,7 +108,7 @@ export default function Header() {
               {/* Right Actions */}
               <div className="flex items-center gap-2">
                 {/* Login/User */}
-                {isAuthenticated && user ? (
+                {mounted && isAuthenticated && user ? (
                   <div className="relative group">
                     <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-primary-600 transition-colors">
                       <User className="w-5 h-5" />
@@ -156,7 +161,7 @@ export default function Header() {
                 >
                   <div className="relative">
                     <ShoppingCart className="w-5 h-5" />
-                    {cartItemCount > 0 && (
+                    {mounted && cartItemCount > 0 && (
                       <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold px-0.5 shadow-md">
                         {cartItemCount > 99 ? '99+' : cartItemCount}
                       </span>

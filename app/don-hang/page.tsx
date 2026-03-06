@@ -32,7 +32,7 @@ interface Order {
   _id: string;
   orderNumber: string;
   items: Array<{ name: string; thumbnail?: string; price: number; quantity: number }>;
-  totalAmount: number;
+  total: number;
   status: string;
   createdAt: string;
   shippingAddress?: { fullName: string };
@@ -170,7 +170,7 @@ export default function MyOrdersPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-secondary text-lg">{formatPrice(order.totalAmount)}</p>
+                      <p className="font-bold text-secondary text-lg">{formatPrice(order.total)}</p>
                     </div>
                   </div>
 

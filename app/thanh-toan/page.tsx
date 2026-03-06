@@ -8,6 +8,7 @@ import { ChevronRight, MapPin, CreditCard, Truck, CheckCircle2 } from 'lucide-re
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCartStore, useAuthStore } from '@/lib/store';
+import { orderApi } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
 import { fetchProvinces, fetchDistricts, fetchWards, Province, District, Ward } from '@/lib/vietnamAddress';
 import toast from 'react-hot-toast';
@@ -25,6 +26,7 @@ export default function CheckoutPage() {
   const { user, isAuthenticated } = useAuthStore();
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const [form, setForm] = useState({
     fullName: user?.fullName || '',
@@ -41,6 +43,20 @@ export default function CheckoutPage() {
   const [wards, setWards] = useState<Ward[]>([]);
   const [selectedProvinceCode, setSelectedProvinceCode] = useState<number | null>(null);
   const [selectedDistrictCode, setSelectedDistrictCode] = useState<number | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.fullName || '',
+        phone: prev.phone || user.phone || '',
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchProvinces().then(setProvinces);
@@ -93,6 +109,15 @@ export default function CheckoutPage() {
   const shippingFee = subtotal >= 2000000 ? 0 : 30000;
   const total = subtotal + shippingFee;
 
+  useEffect(() => {
+    if (!mounted) return;
+    if (!isAuthenticated) {
+      router.push('/');
+    } else if (items.length === 0) {
+      router.push('/gio-hang');
+    }
+  }, [mounted, isAuthenticated, items.length, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -102,23 +127,39 @@ export default function CheckoutPage() {
     }
 
     setIsProcessing(true);
-    
-    // Simulate order creation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const orderNumber = `TG${Date.now().toString().slice(-8)}`;
-    clearCart();
-    toast.success('Đặt hàng thành công!');
-    router.push(`/don-hang/thanh-cong?order=${orderNumber}`);
+
+    try {
+      const response = await orderApi.create({
+        shippingAddress: {
+          fullName: form.fullName,
+          phone: form.phone,
+          province: form.province,
+          district: form.district,
+          ward: form.ward,
+          street: form.street,
+        },
+        paymentMethod,
+        note: form.note,
+        items: items.map((item) => ({
+          productId: item.productId,
+          variantSku: item.variantSku,
+          variant: item.variant,
+          quantity: item.quantity,
+        })),
+      });
+
+      const order = response.data;
+      clearCart();
+      toast.success('Đặt hàng thành công!');
+      router.push(`/don-hang/thanh-cong?order=${order.orderNumber}`);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Đặt hàng thất bại');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  if (!isAuthenticated) {
-    router.push('/');
-    return null;
-  }
-
-  if (items.length === 0) {
-    router.push('/gio-hang');
+  if (!mounted || !isAuthenticated || items.length === 0) {
     return null;
   }
 

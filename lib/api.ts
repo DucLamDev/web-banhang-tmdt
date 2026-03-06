@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = "https://web-banhang-tmdt-backend.onrender.com/api"
-// const API_URL = "http://localhost:3001/api"
+// const API_URL = "https://web-banhang-tmdt-backend.onrender.com/api"
+const API_URL = "http://localhost:3001/api"
 
 const api = axios.create({
   baseURL: API_URL,
@@ -66,11 +66,14 @@ export const userApi = {
     api.put('/users/profile', data),
   updatePassword: (data: { currentPassword: string; newPassword: string }) =>
     api.put('/users/password', data),
+  getAddresses: () => api.get('/users/me'),
   addAddress: (data: Record<string, unknown>) => api.post('/users/addresses', data),
   updateAddress: (addressId: string, data: Record<string, unknown>) =>
     api.put(`/users/addresses/${addressId}`, data),
   deleteAddress: (addressId: string) => api.delete(`/users/addresses/${addressId}`),
+  getWishlist: () => api.get('/users/wishlist'),
   toggleWishlist: (productId: string) => api.post(`/users/wishlist/${productId}`),
+  removeWishlist: (productId: string) => api.delete(`/users/wishlist/${productId}`),
   googleLogin: (credential: string) => api.post('/users/google-login', { credential }),
 };
 
@@ -94,6 +97,32 @@ export const orderApi = {
   getById: (id: string) => api.get(`/orders/${id}`),
   tracking: (orderNumber: string) => api.get(`/orders/tracking/${orderNumber}`),
   cancel: (id: string, reason?: string) => api.put(`/orders/${id}/cancel`, { reason }),
+};
+
+// Admin APIs
+export const adminApi = {
+  // Dashboard
+  getStats: () => api.get('/admin/stats'),
+  // Orders
+  getOrders: (params?: Record<string, unknown>) => api.get('/orders', { params }),
+  updateOrderStatus: (id: string, data: { status: string; note?: string }) => api.put(`/orders/${id}/status`, data),
+  // Products
+  getProducts: (params?: Record<string, unknown>) => api.get('/products', { params: { ...params, includeInactive: true } }),
+  createProduct: (data: Record<string, unknown>) => api.post('/products', data),
+  updateProduct: (id: string, data: Record<string, unknown>) => api.put(`/products/${id}`, data),
+  deleteProduct: (id: string) => api.delete(`/products/${id}`),
+  // Categories
+  createCategory: (data: Record<string, unknown>) => api.post('/categories', data),
+  updateCategory: (id: string, data: Record<string, unknown>) => api.put(`/categories/${id}`, data),
+  deleteCategory: (id: string) => api.delete(`/categories/${id}`),
+  // Users
+  getUsers: () => api.get('/users'),
+  toggleUserStatus: (id: string) => api.put(`/users/${id}/toggle-status`),
+  // Vouchers
+  getVouchers: () => api.get('/vouchers'),
+  createVoucher: (data: Record<string, unknown>) => api.post('/vouchers', data),
+  updateVoucher: (id: string, data: Record<string, unknown>) => api.put(`/vouchers/${id}`, data),
+  deleteVoucher: (id: string) => api.delete(`/vouchers/${id}`),
 };
 
 // Chat APIs

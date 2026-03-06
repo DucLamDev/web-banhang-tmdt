@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Star, Heart, ShoppingCart, Shield, Truck, RotateCcw, ChevronRight, Minus, Plus, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +45,7 @@ interface Product {
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
@@ -117,7 +118,7 @@ export default function ProductDetailPage() {
       price: selectedVariant.price,
       quantity,
     });
-    window.location.href = '/thanh-toan';
+    router.push('/thanh-toan');
   };
 
   const handleAddToCart = () => {
