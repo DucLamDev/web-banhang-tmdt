@@ -57,6 +57,8 @@ interface PublicVoucher {
   maxDiscount?: number;
 }
 
+type WarrantyOption = 'standard' | 'accidental';
+
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -69,6 +71,7 @@ export default function ProductDetailPage() {
   const [selectedStorage, setSelectedStorage] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [selectedWarranty, setSelectedWarranty] = useState<WarrantyOption>('standard');
   const [availableVouchers, setAvailableVouchers] = useState<PublicVoucher[]>([]);
   const [voucherCode, setVoucherCode] = useState('');
   const { addItem, appliedVoucher, applyVoucher, removeVoucher } = useCartStore();
@@ -522,18 +525,30 @@ export default function ProductDetailPage() {
                 Chọn 1 trong các khuyến mãi:
               </h3>
               <div className="space-y-2">
-                <label className="flex items-start gap-3 p-3 border-2 border-primary bg-primary/5 rounded-lg cursor-pointer">
-                  <input type="radio" name="warranty" defaultChecked className="mt-1" />
+                <label className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors ${selectedWarranty === 'standard' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input
+                    type="radio"
+                    name="warranty"
+                    checked={selectedWarranty === 'standard'}
+                    onChange={() => setSelectedWarranty('standard')}
+                    className="mt-1"
+                  />
                   <div className="flex-1">
                     <p className="font-medium text-gray-800">Bảo hành theo nhà sản xuất - 24 tháng</p>
-                    <p className="text-sm text-secondary font-bold">14.990.000₫</p>
+                    <p className={`text-sm font-bold ${selectedWarranty === 'standard' ? 'text-secondary' : 'text-gray-600'}`}>14.990.000₫</p>
                   </div>
                 </label>
-                <label className="flex items-start gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-gray-300">
-                  <input type="radio" name="warranty" className="mt-1" />
+                <label className={`flex items-start gap-3 p-3 border-2 rounded-lg cursor-pointer transition-colors ${selectedWarranty === 'accidental' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <input
+                    type="radio"
+                    name="warranty"
+                    checked={selectedWarranty === 'accidental'}
+                    onChange={() => setSelectedWarranty('accidental')}
+                    className="mt-1"
+                  />
                   <div className="flex-1">
                     <p className="font-medium text-gray-800">Kèm gói bảo hiểm rơi vỡ - 6 tháng</p>
-                    <p className="text-sm text-gray-600">15.877.000₫</p>
+                    <p className={`text-sm ${selectedWarranty === 'accidental' ? 'text-secondary font-bold' : 'text-gray-600'}`}>15.877.000₫</p>
                     <p className="text-xs text-gray-500">MIỄN PHÍ sửa chữa hoặc ĐỔI MỚI nếu hư hỏng (Khách hàng bù 25%)</p>
                   </div>
                 </label>
