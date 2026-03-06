@@ -68,8 +68,43 @@ export default function AdminDashboard() {
 
     const fetchStats = async () => {
       try {
-        const res = await adminApi.getStats();
-        setData(res.data);
+        const [ordersRes, productsRes, usersRes] = await Promise.all([
+          adminApi.getOrders({ page: 1, limit: 100 }),
+          adminApi.getProducts({ page: 1, limit: 100 }),
+          adminApi.getUsers(),
+        ]);
+
+        const orders = ordersRes.data.orders || [];
+        const products = productsRes.data.products || [];
+        const users = usersRes.data || [];
+
+        const totalRevenue = orders
+          .filter((order: { status: string; total: number }) => order.status !== 'cancelled')
+          .reduce((sum: number, order: { total: number }) => sum + (order.total || 0), 0);
+
+        const recentOrders = [...orders]
+          .sort((a: { createdAt: string }, b: { createdAt: string }) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 5);
+
+        const topProducts = [...products]
+          .sort((a: { totalSold?: number }, b: { totalSold?: number }) => (b.totalSold || 0) - (a.totalSold || 0))
+          .slice(0, 5)
+          .map((product: { _id: string; name: string; totalSold?: number; variants?: Array<{ price?: number }> }) => ({
+            _id: product._id,
+            name: product.name,
+            totalSold: product.totalSold || 0,
+            revenue: (product.totalSold || 0) * (product.variants?.[0]?.price || 0),
+          }));
+
+        setData({
+          totalRevenue,
+          totalOrders: ordersRes.data.total || orders.length,
+          pendingOrders: orders.filter((order: { status: string }) => order.status === 'pending').length,
+          totalProducts: productsRes.data.total || products.length,
+          totalUsers: Array.isArray(users) ? users.length : 0,
+          recentOrders,
+          topProducts,
+        });
       } catch (err) {
         console.error('Failed to load stats:', err);
       } finally {
