@@ -52,9 +52,20 @@ export default function AdminDashboard() {
   const { user, isAuthenticated } = useAuthStore();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'admin') { router.push('/'); return; }
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (!isAuthenticated || user?.role !== 'admin') {
+      setLoading(false);
+      router.push('/');
+      return;
+    }
+
     const fetchStats = async () => {
       try {
         const res = await adminApi.getStats();
@@ -66,7 +77,15 @@ export default function AdminDashboard() {
       }
     };
     fetchStats();
-  }, [isAuthenticated, user]);
+  }, [mounted, isAuthenticated, router, user]);
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated || user?.role !== 'admin') return null;
 
