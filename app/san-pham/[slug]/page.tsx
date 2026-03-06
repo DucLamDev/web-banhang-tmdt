@@ -179,7 +179,7 @@ export default function ProductDetailPage() {
           {/* Left: Images */}
           <div className="lg:col-span-5 space-y-3 md:space-y-4">
             <div className="bg-white rounded-xl p-3 md:p-4 border">
-              <div className="relative w-full h-[250px] md:h-[320px]">
+              <div className="relative w-full h-[250px] md:h-[360px]">
                 <Image
                   src={product.images[selectedImage] || product.thumbnail}
                   alt={product.name}
@@ -205,6 +205,52 @@ export default function ProductDetailPage() {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Store commitments - fills blank space below image */}
+            <div className="hidden lg:block bg-white rounded-xl border p-4">
+              <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Cam kết của MiniShop
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Hàng chính hãng 100%</p>
+                    <p className="text-xs text-gray-500">Xuất xứ rõ ràng, tem chính hãng</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <Truck className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Giao hàng nhanh toàn quốc</p>
+                    <p className="text-xs text-gray-500">Giao trong 2 giờ nội thành</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <RotateCcw className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Đổi trả 30 ngày dễ dàng</p>
+                    <p className="text-xs text-gray-500">Hoàn tiền nếu không đúng mô tả</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-4 h-4 text-orange-500" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Bảo hành tại MiniShop</p>
+                    <p className="text-xs text-gray-500">{product.warranty?.months || 12} tháng bảo hành chính hãng</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -381,8 +427,15 @@ export default function ProductDetailPage() {
               <Button size="lg" className="flex-1 h-14 text-lg bg-primary hover:bg-primary-600" onClick={handleBuyNow}>
                 Mua ngay
               </Button>
-              <Button size="lg" variant="outline" className="h-14 w-14 flex-shrink-0" onClick={handleToggleWishlist}>
-                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-secondary text-secondary' : 'text-gray-400'}`} />
+              <Button
+                size="lg"
+                variant="outline"
+                className={`h-14 w-14 flex-shrink-0 flex flex-col gap-0.5 border-2 transition-colors ${
+                  isWishlisted ? 'border-red-400 bg-red-50 text-red-500' : 'border-gray-200 hover:border-red-300 hover:text-red-400'
+                }`}
+                onClick={handleToggleWishlist}
+              >
+                <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
               </Button>
             </div>
 

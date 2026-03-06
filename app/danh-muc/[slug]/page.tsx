@@ -208,7 +208,7 @@ export default function CategoryPage() {
                         name="price"
                         checked={selectedPrice === range.label}
                         onChange={() => setSelectedPrice(selectedPrice === range.label ? null : range.label)}
-                        className="w-4 h-4 text-primary accent-yellow-500"
+                        className="w-4 h-4 accent-teal-500"
                       />
                       <span className="text-sm">{range.label}</span>
                     </label>
@@ -226,7 +226,7 @@ export default function CategoryPage() {
                         type="checkbox"
                         checked={selectedBrands.includes(brand)}
                         onChange={() => toggleBrand(brand)}
-                        className="w-4 h-4 text-primary rounded accent-yellow-500"
+                        className="w-4 h-4 accent-teal-500 rounded"
                       />
                       <span className="text-sm">{brand}</span>
                     </label>
@@ -296,15 +296,15 @@ export default function CategoryPage() {
             {hasActiveFilters && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {selectedPrice && (
-                  <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm flex items-center gap-1 font-medium">
                     {selectedPrice}
-                    <button onClick={() => setSelectedPrice(null)} className="ml-1 font-bold">×</button>
+                    <button onClick={() => setSelectedPrice(null)} className="ml-1 font-bold hover:text-primary/70">×</button>
                   </span>
                 )}
                 {selectedBrands.map(brand => (
-                  <span key={brand} className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm flex items-center gap-1">
+                  <span key={brand} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm flex items-center gap-1 font-medium">
                     {brand}
-                    <button onClick={() => toggleBrand(brand)} className="ml-1 font-bold">×</button>
+                    <button onClick={() => toggleBrand(brand)} className="ml-1 font-bold hover:text-primary/70">×</button>
                   </span>
                 ))}
                 <button onClick={clearFilters} className="text-sm text-red-500 hover:underline">Xóa tất cả</button>
